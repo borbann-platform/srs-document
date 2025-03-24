@@ -1,0 +1,63 @@
+% Load your needed packages and other commands of yours here:
+\usepackage[firstpage=true]{background}
+\backgroundsetup{scale=1, angle=0, opacity=.1, contents ={ 
+% \includegraphics[width=14cm]{MBZUAI-Blue.eps}
+}}
+
+%--------------------------------------------------------------------------
+% Do NOT edit the rest of the preamble UNLESS YOU KNOW WHAT YOU'RE DOING!
+%--------------------------------------------------------------------------
+
+\ifthenelse{\boolean{PrintVersion}}{
+\usepackage[top=1in,bottom=1in,left=0.75in,right=1.25in]{geometry}   % For twoside document
+}{
+\usepackage[top=1in,bottom=1in,left=0.75in,right=1.25in]{geometry}   % For oneside document
+}
+
+\usepackage{amsmath,amssymb,amstext} % Lots of math symbols and environments
+\usepackage{graphicx} % For including graphics 
+
+\usepackage{nomentbl} 
+\makenomenclature 
+
+\usepackage{ifpdf}
+
+\newcommand{\href}[1]{#1} % does nothing, but defines the command so the print-optimized version will ignore \href tags
+
+\usepackage[\ifpdf pdftex,\fi pagebackref=false]{hyperref} % with basic options
+\ifthenelse{\boolean{PrintVersion}}{   % for improved print quality, change some hyperref options
+\hypersetup{	% override some previously defined hyperref options
+    citecolor=black,%
+    filecolor=black,%
+    linkcolor=black,%
+    urlcolor=black}
+}{} % end of ifthenelse (no else)
+
+\usepackage{etoolbox} % For patching commands
+
+\makeatletter
+% Redefine \tableofcontents to use \section*
+\renewcommand{\tableofcontents}{%
+  \section*{\contentsname}%
+  \@mkboth{\contentsname}{\contentsname}% Set headers
+  \@starttoc{toc}% Generate TOC
+}
+
+% Redefine \listoffigures to use \section*
+\renewcommand{\listoffigures}{%
+  \section*{\listfigurename}%
+  \@mkboth{\listfigurename}{\listfigurename}% Set headers
+  \@starttoc{lof}% Generate LOF
+}
+
+% Redefine \listoftables to use \section*
+\renewcommand{\listoftables}{%
+  \section*{\listtablename}%
+  \@mkboth{\listtablename}{\listtablename}% Set headers
+  \@starttoc{lot}% Generate LOT
+}
+
+
+\usepackage{booktabs}
+\usepackage{colortbl}
+\usepackage{enumitem}

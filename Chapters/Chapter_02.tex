@@ -1,0 +1,82 @@
+% Some LaTeX commands I define for my own nomenclature.
+% If you have to, it's better to change nomenclature once here than in a 
+% million places throughout your thesis!
+\newcommand{\package}[1]{\textbf{#1}} % package names in bold text
+\newcommand{\cmmd}[1]{\textbackslash\texttt{#1}} % command name in tt font 
+
+
+%======================================================================
+\chapter{Literature Review and Related Work}
+%======================================================================
+
+% This is Chapter 02!
+% Author \cite{al2020generalizing} presented....
+% Author \cite{elayan2021digital} proposed...
+% Author \cite{10223206} implemented...
+
+This chapter presents a review of existing platforms in the domain of real estate analytics and information systems. 
+This review includes both international and Thai platforms, their features, strengths, and limitations. 
+The analysis establishes the current state of real estate information platforms and identifies opportunities 
+for the BorBann platform to address unmet needs in the Thai market.
+
+\section{Competitor Analysis}
+
+Many real estate platforms primarily function as property listing aggregators rather than comprehensive information systems. 
+Their features support transaction facilitation through showcasing available properties, while offering limited analytical tools for market understanding.
+ However, platforms like House Canary represent exceptions, operating specifically as information systems that provide investors with
+  data analytics and market insights to support evidence-based decision-making in real estate investments.
+
+\begin{table}[htbp]
+\centering
+\renewcommand{\arraystretch}{1.3}
+\resizebox{0.9\textwidth}{!}{ % Adjust width to 90% of text width
+    \begin{tabular}{>{\raggedright\arraybackslash}p{0.35\textwidth}>{\centering\arraybackslash}p{0.15\textwidth}>{\centering\arraybackslash}p{0.15\textwidth}>{\centering\arraybackslash}p{0.15\textwidth}>{\centering\arraybackslash}p{0.15\textwidth}>{\centering\arraybackslash}p{0.15\textwidth}}
+        \toprule \rowcolor[gray]{0.9} 
+        \textbf{Feature}                              & \textbf{BorBann (Proposed)} & \textbf{DDProperty} & \textbf{Hipflat} & \textbf{House Canary} & \textbf{Zillow} \\
+        \midrule
+        \textbf{Customizable Automated Data Integration Pipeline}  & \textbf{Yes} & No              & No                 & No                 & No                 \\
+        \addlinespace \textbf{Retrain Model with Data from Pipeline} & \textbf{Yes} & No              & No                & No    & No  \\
+        \addlinespace \textbf{Local Contextual Analytics} & \textbf{Yes} & No              & No                & Yes (Not optimized for Thailand)  & Yes (Not optimized for Thailand)  \\
+        \addlinespace \textbf{Explainable Price Prediction Model} & \textbf{Yes} & No              & No                 & No                  & No                \\
+        \addlinespace \textbf{Geospatial Visualization}        & \textbf{Yes} & Yes              & Yes                 & Yes                 & Yes                \\
+        \bottomrule
+    \end{tabular}
+}
+\caption{Feature Comparison: BorBann vs Other Platforms}
+\label{tab:feature-comparison}
+\end{table}
+
+Table \ref{tab:feature-comparison} demonstrates BorBann's technical advantages in the real estate analytics market. While all platforms offer geospatial visualization,
+ BorBann's implementation includes advanced analytics like climate assessment, matching international platforms but surpassing local Thai competitors.
+  BorBann's automated data integration pipeline collects analytics-ready data automatically, unlike Thai platforms that rely on user inputs. Also, user can use that data to create their custom models.
+   For local contextual analytics, BorBann provides Thailand-optimized insights including weather patterns and population density,
+    whereas DDProperty/Hipflat only show basic nearby facilities, and international platforms lack Thailand-specific optimization.
+     Most distinctively, BorBann's price prediction model prioritizes explainability and interpretability,
+      revealing the reasoning behind valuations rather than presenting opaque predictions like competing platforms.
+
+
+\begin{table}[htbp]
+\centering
+\renewcommand{\arraystretch}{1.3}
+\resizebox{0.9\textwidth}{!}{
+    \begin{tabular}{>{\raggedright\arraybackslash}p{0.25\textwidth}>{\centering\arraybackslash}p{0.15\textwidth}>{\centering\arraybackslash}p{0.15\textwidth}>{\centering\arraybackslash}p{0.15\textwidth}>{\centering\arraybackslash}p{0.15\textwidth}>{\centering\arraybackslash}p{0.15\textwidth}}
+        \toprule \rowcolor[gray]{0.9} 
+        \textbf{Technical Aspect} & \textbf{DDProperty} & \textbf{Hipflat} & \textbf{House Canary} & \textbf{Zillow} & \textbf{BorBann (Proposed)} \\
+        \midrule
+        \textbf{Data Sources} & User-submitted, Proprietary & User-submitted, Proprietary & Proprietary & Multiple Sources, Proprietary & Open Data, User-submitted \\
+        \addlinespace \rowcolor[gray]{0.95} \textbf{ML Implementation} & Basic Prediction & None & Black-box Models & Black-box Models & Explainable Models \\
+        \bottomrule
+    \end{tabular}
+}
+\caption{Comprehensive Technical Comparison}
+\label{tab:competitor-analysis}
+\end{table}
+
+Table \ref{tab:competitor-analysis} highlights key technical differences between BorBann and competing platforms.
+ For data sources, while competitors rely heavily on government or user-submitted data, BorBann uniquely leverages open data combined with
+  APIs to build a more comprehensive dataset. Regarding machine learning, BorBann distinguishes itself by implementing explainable models,
+   providing transparency in its predictions. This contrasts with DDProperty's basic prediction capabilities, Hipflat's complete lack of ML features,
+    and the black-box approaches of House Canary and Zillow where prediction logic remains hidden from users.
+
+% \section{Literature Review}
+

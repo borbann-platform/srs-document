@@ -1,0 +1,54 @@
+\documentclass[12pt,oneside,openany]{memoir}
+
+\usepackage{ifthen}
+\newboolean{PrintVersion}
+\setboolean{PrintVersion}{false} 
+\usepackage{lipsum} 
+\usepackage{tikz}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{tabularx}
+\usepackage{subcaption}
+
+\input{thesis-preamble}
+\chapterstyle{titlesec}
+\input{private/thesis-margins-and-spaces}
+
+\begin{document}
+
+\newcommand{\thesisauthor}{Pattadon Loyprasert 6510545608}
+\newcommand{\thesecondsisauthor}{Sirin Phungkun 6510545730}
+\newcommand{\thesistitlecoverpage}{BorBann\\ A Real Estate Information Platform\\ (Project Proposal)}
+\newcommand{\nameofprogram}{01219395 Innovative Software Group Project Preparation}
+\newcommand{\academicunit}{\nameofprogram}
+\newcommand{\faculty}{Faculty of Engineering}
+\newcommand{\graduationyear}{2025}
+
+\input{private/frontpage}
+\input{private/approvalpage}
+% \input{Chapters/Abstract}
+\input{private/toc-lot-lof}
+% \input{Chapters/List_of_Abbreviations}
+
+\newpage
+\pagenumbering{arabic}
+\pagestyle{headings}
+
+\include{Chapters/Chapter_01}
+\include{Chapters/Chapter_02}
+\include{Chapters/Chapter_03}
+\include{Chapters/Chapter_04}
+
+\renewcommand*{\bibname}{References}
+\bibliographystyle{IEEEtran}
+\ifthenelse{\boolean{PrintVersion}}{
+\cleardoublepage
+}{
+\clearpage
+}
+\phantomsection
+\bibliography{bibliography/keylatex}
+
+\clearpage
+
+\end{document}

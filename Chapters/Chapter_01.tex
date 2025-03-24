@@ -1,0 +1,159 @@
+%======================================================================
+
+\chapter{Introduction}
+%======================================================================
+
+%----------------------------------------------------------------------
+\section{Background}
+%----------------------------------------------------------------------
+
+    The global real estate market shows positive growth trends despite various challenges.
+Real estate market remains a key sector for people like homebuyers and investors,
+influenced by complex characteristics with heterogeneous nature and affected by numerous elements like policies and consumer trends.
+The market is projected to grow from \$4,143.71 billion in 2024 to \$4,466.58 billion in 2025, and global real estate investment volumes continue to increase in 2024\cite{JLL2025}.
+
+Thailand's real estate market faces both challenges and opportunities in the current economic climate. The real estate market in Thailand,
+especially in Bangkok in 2024-2025, faces challenges such as high household debt, strict credit conditions, and rising costs causing market contraction,
+decreasing project launches by 43.72\% in 2024\cite{nationthailand1}. However, it also presents opportunities for recovery through foreign investment driven by tourism recovery,
+government incentives, and technological advancements. Condominiums remain attractive for rental yields and foreign buyers, while the housing market has moderate growth supported by infrastructure development.
+
+% Additionally, Thailand's real estate information ecosystem suffers from several structural limitations,
+% including outdated listings, lack of official transaction data, and data
+% fragmentation\cite{bangkokpost1}. Addressing these issues is important for improving Thailand's
+% market accessibility and decision-making for both homebuyers and investors.
+
+Crucially, these market opportunities can significantly undermined by Thailand's real estate information ecosystem, which suffers from several structural limitations, including outdated listings,
+lack of official transaction data, and data fragmentation\cite{bangkokpost1}. Addressing these issues is essential for maximizing Thailand's market potential and enabling effective decision-making
+for both homebuyers and investors seeking to capitalize on the available opportunities.
+
+%----------------------------------------------------------------------
+\section{Problem Statement}
+%----------------------------------------------------------------------
+
+Even with large amounts of real estate data available through various channels including
+property listings, historical transaction records, and news, investors still
+face challenges in aggregating, contextualizing, and deriving action from these
+sources. Additionally, the Thai real estate market has different characteristics
+from other countries because of the limited availability of official property
+transaction records, listing duplication across platforms, and less standardized
+data compared to more mature markets.
+
+Current platforms in Thailand like DDProperty, Hipflat, and Baania lack many
+important contextual factors such as climate risk assessments, neighborhood-specific
+news, and local beliefs that influence property valuation and real estate
+investment in the long term.
+
+While platforms like Zillow and House Canary have advanced and comprehensive
+real estate analytics, predictive analytics, and user-friendly interfaces, they do
+not operate in Thailand. Even if these advanced platforms were to enter the Thai
+market, they would face challenges adapting their algorithms to the local context.
+Their models are calibrated to markets with standardized property
+classifications, valuations that vary by developers, and consistent transaction
+data—elements that are limited in Thailand's real estate ecosystem.
+
+The BorBann platform addresses these challenges and aims to help users by
+creating a real estate data platform integrated with artificial intelligence, geospatial
+analytics, and data aggregation by focusing on analytics rather than transaction
+facilitation.
+
+%----------------------------------------------------------------------
+\section{Solution Overview}
+%----------------------------------------------------------------------
+
+BorBann will function as real estate data platform to users, integrating multiple
+data sources with advanced analytics. Below are the features and their details.
+
+\subsection{Customizable Automated Data Integration Pipeline}  
+\begin{itemize}  
+    \item \textbf{Automated schema inference:} Analyze website structures to identify and extract key data elements  
+    \item \textbf{Field mapping:} Recognize equivalent fields across different sources (e.g., "price" vs "cost")  
+    \item \textbf{Integration framework:} Seamless connection with data export systems  
+    \item \textbf{Multi-source support:} Process data from websites, APIs, and uploaded files  
+\end{itemize}  
+
+\subsection{Retrain Model with Data from Pipeline}  
+\begin{itemize}  
+    \item \textbf{Custom prediction model:} Create custom prediction models by combining their pipeline data with platform data sources
+\end{itemize}
+
+\subsection{Local Contextual Analytics}  
+\begin{itemize}  
+    \item \textbf{Environmental risk assessment:} Evaluate flood risk, natural disaster vulnerability, and air quality  
+    \item \textbf{Facility proximity analysis:} Calculate accessibility to schools, hospitals, transit, and commercial centers  
+    \item \textbf{Neighborhood quality scoring:} Generate composite metrics for area evaluation  
+\end{itemize}  
+  
+\subsection{Explainable Price Prediction Model}  
+\begin{itemize}  
+    \item \textbf{Feature importance analysis:} Quantify and rank factors influencing property prices  
+    \item \textbf{Adjustable characteristics modeling:} Adjust property characteristics to visualize price impacts  
+    \item \textbf{Confidence intervals:} Provide lower/upper price bounds for realistic expectations  
+    \item \textbf{Factor categorization:} Group influences by type (property features, location, market trends)  
+    \item \textbf{Natural language explanations:} Generate readable summaries of price determinants  
+    \item \textbf{Visual breakdowns:} Display contribution percentages and relationship graphs  
+\end{itemize}  
+  
+\subsection{Geospatial Visualization}  
+\begin{itemize}  
+    \item \textbf{Heatmap generation:} Create density visualizations for environmental factors, pricing, and metrics  
+    \item \textbf{Geospatial analytics:} Calculate analytics for custom geographic areas  
+\end{itemize}
+\newpage
+
+%----------------------------------------------------------------------
+\section{Target User}
+%----------------------------------------------------------------------
+
+\begin{table}[htbp]
+	\centering
+	\renewcommand{\arraystretch}{1.3}
+	\begin{tabular}{>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.35\textwidth}>{\raggedright\arraybackslash}p{0.3\textwidth}}
+		\toprule \rowcolor[gray]{0.9} \textbf{User Type}        & \textbf{Description}                                                                                 & \textbf{Needs}                                                                                                 \\
+		\midrule \textbf{Real Estate Investors}                 & Individuals focused on maximizing long-term investment, including foreign investors & \begin{itemize}\item Investment analysis
+
+\item Supporting data for decision making
+\end{itemize}            \\
+		\addlinespace \rowcolor[gray]{0.95} \textbf{Homebuyers} & First-time purchasers, residents looking to relocate within Thailand, and expats seeking housing     & \begin{itemize}\item Property comparisons
+
+\item Neighborhood insights
+
+\item Pricing guidance\end{itemize}    \\
+		\bottomrule
+	\end{tabular}
+	\caption{Target Users and Their Needs}
+	\label{tab:users}
+\end{table}
+
+%----------------------------------------------------------------------
+\section{Benefit}
+%----------------------------------------------------------------------
+
+The BorBann platform will provide numerous benefits to the Thai real estate market.
+It improves market transparency by enhancing accessibility to market information.
+It also helps both homebuyers and investors reduce research time, achieve lower
+transaction risks, and discover overlooked investment opportunities.
+Additionally, the platform will effectively represent the unique characteristics
+of the Thai real estate market.
+
+\newpage
+
+%----------------------------------------------------------------------
+\section{Terminology}
+%----------------------------------------------------------------------
+
+\begin{table}[htbp]
+	\centering
+	\renewcommand{\arraystretch}{1.3}
+	\begin{tabular}{>{\raggedright\arraybackslash}p{0.3\textwidth}>{\raggedright\arraybackslash}p{0.6\textwidth}}
+		\toprule \rowcolor[gray]{0.9} \textbf{Term}                           & \textbf{Definition}                                                                                                                                                       \\
+		\addlinespace \textbf{Local Analytics}                           & Analysis focused on extremely specific geographic areas, such as neighborhoods or even individual streets, to provide highly relevant insights.                           	  \\
+		\addlinespace \rowcolor[gray]{0.95} \textbf{Price Prediction Model}   & An algorithm or statistical model that forecasts property values based on historical data, market trends, and various property characteristics.                           \\
+		\addlinespace \textbf{Proximity Analysis}                             & The study of spatial relationships between geographic features, typically to evaluate the distance between properties and amenities or services.                          \\
+		\addlinespace \rowcolor[gray]{0.95} \textbf{Geospatial Visualization} & The graphical representation of data with a geographic or spatial component, often through maps and interactive displays.                                                 \\
+		\bottomrule
+	\end{tabular}
+	\caption{Terminology}
+	\label{tab:terminology}
+\end{table}
+
+
