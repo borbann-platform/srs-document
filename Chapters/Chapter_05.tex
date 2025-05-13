@@ -181,7 +181,36 @@ For each AI component in our system, we analyze three key dimensions:
 
 \subsection{AI Canvas Development}
 
-\noindent Figure \ref{fig:ai-canvas} presents an AI Canvas diagram for an Explainable Price Prediction \& Context-Aware Analytics system tailored to the Thai real estate market. This strategic planning tool articulates how artificial intelligence creates value through structured components that guide implementation.
+\subsubsection{1. Data schema mapping}
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=1\textwidth]{assets/ai/ai-canvas-2.png}
+	\caption{Data schema mapping AI Canvas}
+	\label{fig:ai-canvas-1}
+\end{figure}
+
+\noindent Figure \ref{fig:ai-canvas-1} presents an AI Canvas diagram for a Real Estate Data Schema Mapping system. This strategic planning tool articulates how artificial intelligence creates value through structured components that guide the implementation of a unified canonical data schema for real estate information.
+
+The AI Canvas comprises eight interconnected sections that collectively define the system's purpose and operation. The Prediction section establishes the core functionality: estimating and capturing context from each data source and mapping it into each field in the canonical data schema. This works in concert with the Judgment section, which articulates the critical trade-offs the system must evaluate, focusing on assessing the correctness of the output unified data schema and measuring the amount of knowledge potentially lost throughout the mapping process.
+
+The Action section defines how the system's outputs are translated into tangible steps, outputting the results in JSON format with correctly mapped fields. These actions lead to the Outcome section, which clarifies the ultimate value proposition: generating a unified dataset represented as a single JSON object conforming to the CanonicalRecord schema, including transformed fields such as price, area, and address.
+
+The Input Data section catalogues the available information sources: user prompts containing instructions for mapping raw property data snippets to a specified schema (CanonicalRecord) using transformation rules, including both the schema specifications and the raw data itself. Complementing this, the Training Data section defines the labeled examples powering the model: JSONL datasets where both prompts and responses are wrapped in contents arrays with clearly labeled roles ("user" and "model"), each containing parts arrays with text.
+
+The Feedback section outlines how the model will learn over time by tracking metrics like JSON Syntactic Validity and Pydantic Schema Conformance. The Intervention section establishes boundaries for human oversight, calling for expert involvement when input data sources fall outside the real estate scope. The Explanation section details the technical approaches for transparency: Traceable Prompting and Chain-of-Thought (CoT) Prompting methodologies to provide insight into the system's decision-making processes.
+
+
+\subsubsection{2. Explainable Price Predition}
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=1\textwidth]{assets/ai/ai-canvas.png}
+	\caption{Explainable Price Predition AI Canvas}
+	\label{fig:ai-canvas-2}
+\end{figure}
+
+\noindent Figure \ref{fig:ai-canvas-2} presents an AI Canvas diagram for an Explainable Price Prediction \& Context-Aware Analytics system tailored to the Thai real estate market. This strategic planning tool articulates how artificial intelligence creates value through structured components that guide implementation.
 
 The AI Canvas comprises eight interconnected sections that collectively define the system's purpose and operation. The Prediction section establishes the core functionality: estimating property market values based on input features, providing confidence intervals to quantify uncertainty, and delivering accessible explanations to users. This works in concert with the Judgment section, which articulates the critical trade-offs the system must evaluate, focusing on assessing prediction reliability through model confidence metrics, data completeness evaluation, and deviation analysis from comparable properties.
 
@@ -193,12 +222,6 @@ The Feedback section outlines how the model will learn over time by tracking met
 
 \newpage
 
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=1\textwidth]{assets/ai/ai-canvas.png}
-	\caption{Overview system workflow}
-	\label{fig:ai-canvas}
-\end{figure}
 
 \newpage
 
@@ -328,3 +351,169 @@ The system explains which factors influenced the prediction most — such as loc
 \end{figure}
 
 Figure \ref{fig:price-prediction-ui-2} shows an interface that visualizes the impact of each factor using bar graphs and percentage values.
+
+
+\section{Deployment Strategy}
+\label{sec:deployment_strategy}
+
+\subsection{Objective}
+To detail the plan for integrating and running the AI-powered Real Estate Data Mapping model within a production environment, ensuring it effectively connects with the existing data ingestion pipeline and provides reliable, scalable, and maintainable operation. The AI model is central to transforming heterogeneous source data (from APIs, files, and web scraping) into a unified canonical format for real estate listings.
+
+\subsection{Deployment Plan}
+
+\subsubsection{Chosen Environment: Cloud-Based Deployment}
+The AI model, along with the entire data integration pipeline system, will be deployed on a \textbf{Cloud Platform} which is Google Cloud Platform (GCP). Vary between each AI component, for example, data schema mapping will use Vertex AI while other may use cloud computing.
+
+\textbf{Justification:}
+\begin{itemize}
+    \item \textbf{Scalability:} Cloud platforms offer elastic scaling of compute resources (CPUs, GPUs for LLM inference) and managed services, crucial for handling variable data loads and complex model computations.
+    \item \textbf{Managed Services:} Leveraging services like Kubernetes (GKE, EKS, AKS) for container orchestration, managed databases for storing pipeline configurations and results, object storage (GCS, S3) for raw data and model artifacts, and potentially managed AI platforms (Vertex AI, SageMaker) simplifies infrastructure management.
+    \item \textbf{Reliability \& Availability:} Cloud providers offer high availability zones and built-in redundancy features.
+    \item \textbf{Integration:} Easier integration with other cloud services (e.g., data warehouses, monitoring tools).
+\end{itemize}
+While on-device or embedded systems are not suitable for this large-scale data processing and LLM inference task, an Edge deployment could be considered in the future for specific data pre-processing or localized data collection components if required, but the core AI mapping will reside in the cloud.
+
+\subsubsection{AI Communication with the System: Internal Service Integration}
+The AI mapping model will not be exposed as a standalone, public-facing API initially. Instead, it will be integrated as an internal component within the existing data integration pipeline's backend service (built with FastAPI).
+
+\textbf{Communication Flow:}
+\begin{enumerate}
+    \item The \texttt{PipelineService} in the FastAPI application receives a request to run a specific pipeline (e.g., via its existing API endpoint \texttt{/pipelines/\{pipeline\_id\}/run}).
+    \item If the pipeline configuration specifies the \texttt{ML\_MAPPING} strategy, the \texttt{PipelineService} invokes the \texttt{IngestionStrategyFactory}.
+    \item The factory instantiates the \texttt{MLIngestionStrategy} (or a specialized version like \texttt{VertexAIMappingStrategy}).
+    \item The \texttt{MLIngestionStrategy} internally:
+        \begin{itemize}
+            \item Loads or accesses the pre-trained/fine-tuned classification model (to identify real estate listings).
+            \item Loads or accesses the pre-trained/fine-tuned LLM mapping model (e.g., from an MLflow registry, a local path within the container, or by calling a managed AI service like Vertex AI).
+            \item Processes the input \texttt{AdapterRecord} data.
+            \item Returns the mapped \texttt{CanonicalRecord} objects (as \texttt{OutputData}) back to the \texttt{PipelineService}.
+        \end{itemize}
+    \item The \texttt{PipelineService} then stores these results.
+\end{enumerate}
+This internal integration ensures that the AI model is a processing step within a larger workflow, rather than a standalone service that other parts of the system call directly via network requests for each mapping task. If a dedicated, reusable mapping service is needed later, a gRPC or REST API wrapper around the core mapping logic could be developed.
+
+\subsubsection{Tools and Frameworks Used}
+\begin{itemize}
+    \item \textbf{FastAPI:} For the main backend service orchestrating pipelines and exposing management APIs.
+    \item \textbf{Python:} Primary programming language for the backend and AI model implementation.
+    \item \textbf{Google Cloud Vertex AI} For using pre-trained foundation models (e.g., Gemini), fine-tuning models via Generative AI Studio, and deploying them as managed endpoints. Communication would be via the Google Cloud Python client libraries.
+    \item \textbf{Pydantic:} For data validation of input, intermediate, and canonical schemas.
+    \item \textbf{Loguru:} For structured logging throughout the application and AI components.
+    \item \textbf{Cloud Storage (GCS, S3):} For storing raw input data, training datasets, and large model artifacts.
+    \item \textbf{SQLite} For storing pipeline configurations, run metadata, and potentially links to canonical data results.
+\end{itemize}
+
+\subsubsection{System Characteristics}
+\textbf{Reliability:}
+\begin{itemize}
+    \item \textbf{Error Handling \& Retries:}
+        \begin{itemize}
+            \item The \texttt{PipelineService} will implement robust error handling for ingestion strategy failures (including AI model errors).
+            \item For transient issues (e.g., temporary unavailability of a cloud AI service), retry mechanisms (e.g., using libraries like `tenacity`) will be implemented for external API calls made by the \texttt{MLIngestionStrategy}.
+            \item The scheduler (APScheduler) has misfire grace time configurations.
+        \end{itemize}
+    \item \textbf{Input Validation:} Pydantic validation at multiple stages (API input, canonical output) ensures data integrity.
+\end{itemize}
+
+\textbf{Security:}
+\begin{itemize}
+    \item \textbf{Cloud IAM:} Utilize cloud provider Identity and Access Management (IAM) for granular control over access to resources (databases, storage, AI services, Kubernetes cluster). Principle of least privilege will be applied.
+    \item \textbf{Secrets Management:} API keys for external LLMs (if used), database credentials, and other secrets will be managed using a secure secrets manager (e.g., HashiCorp Vault, Google Secret Manager, AWS Secrets Manager) and injected into containers as environment variables or mounted volumes, not hardcoded.
+    \item \textbf{Data Encryption:} Data at rest (Cloud Storage, Databases) and in transit (HTTPS for external APIs, internal VPC traffic) will be encrypted.
+\end{itemize}
+
+\textbf{Maintainability \& Scalability:}
+\begin{itemize}
+    \item \textbf{Modular Design:} The separation of concerns (\texttt{PipelineService}, \texttt{IngestionStrategyFactory}, specific \texttt{Strategy} classes) allows for independent updates and maintenance of components.
+    \item \textbf{Comprehensive Logging (Loguru):} Structured logs are centralized (e.g., Google Cloud Logging, ELK stack) for easier debugging and monitoring. The SSE log streaming endpoint aids real-time monitoring of specific pipeline runs.
+    \item \textbf{Scalability (Application):} Kubernetes Horizontal Pod Autoscaler (HPA) will automatically scale the number of FastAPI application pods based on CPU/memory utilization or custom metrics.
+    \item \textbf{Scalability (AI Model Inference):}
+        \begin{itemize}
+            \item \textbf{Managed AI Service (e.g., Vertex AI):} These services typically handle autoscaling of the model endpoint based on traffic. Configure appropriate instance types and min/max replica counts.
+        \end{itemize}
+\end{itemize}
+
+\subsection{Proof of Concept}
+\label{ssec:poc}
+
+\subsubsection{AI Model Build and Test Process}
+The AI model for mapping real estate data to the \texttt{CanonicalRecord} schema was developed iteratively, focusing initially on an LLM-based approach.
+
+\textbf{Development Stages}
+\begin{enumerate}
+    \item \textbf{Data Collection \& Annotation}
+
+    A diverse dataset of approximately 500 property records was collected from various sources, including:
+    \begin{itemize}
+        \item Simulated API outputs (e.g., mock property APIs)
+        \item Example CSV/JSON datasets
+        \item Real estate websites such as Baania and Zillow (conceptual scraping)
+    \end{itemize}
+
+    These records were manually mapped to a unified schema called \texttt{CanonicalRecord}. A foundation model (e.g., GPT-4) was used to generate initial prompt-completion pairs via meta-prompting. All completions were manually reviewed and corrected to produce high-quality training data.
+
+    \item \textbf{LLM Mapper Fine-Tuning (Primary Task)}
+
+    \begin{itemize}
+        \item \textbf{Model Selection:} Experiments were conducted on gemini-2.0-flash-lite-001.
+        \item \textbf{Fine-Tuning Strategy:} Fine-Tuning with supervised method on Vertex AI platform.
+        \item \textbf{Training Data:} About 30 prompt-completion pairs were used with 10 data point for evaluation set. Each prompt contained instructions, the full schema, and raw data. Each completion was a valid JSON object adhering to the \texttt{CanonicalRecord} structure.
+        \item \textbf{Platform:} All tuning jobs were executed on Vertex AI.
+            \begin{itemize}
+                \item Hyperparameters: base model, learning rate, batch size, LoRA rank, LoRA alpha, and epoch count.
+                \item Outputs: Adapter weights, tokenizer config, and example outputs on the eval set.
+            \end{itemize}
+    \end{itemize}
+
+    \item \textbf{Evaluation Methodology}
+
+    \begin{itemize}
+        \item \textbf{During Fine-Tuning:} Vertex AI provides training and validation losses automatically when an eval set is supplied.
+        \item \textbf{Post Fine-Tuning:}
+            \begin{itemize}
+                \item \textbf{JSON Syntactic Validity:} Parse output strings using \texttt{json.loads()}.
+                \item \textbf{Pydantic Schema Conformance:} Instantiate \texttt{CanonicalRecord(**parsed\_json)} to verify structural correctness.
+            \end{itemize}
+        \item \textbf{Manual Review:} A qualitative check was performed to ensure logical accuracy and edge case handling in LLM outputs.
+    \end{itemize}
+\end{enumerate}
+
+
+\subsubsection{Model Performance Results}
+Performance metrics are based on 2 metrics:
+        \begin{itemize}
+            \item \textbf{JSON Syntactic Validity}: Parse the output string and check for validity.
+            \item \textbf{Pydantic Schema Conformance}: Check with pre-defined pydantic schema to ensure that it output the desire data scheme.
+        \end{itemize}
+
+\begin{table}[htbp]
+    \centering
+    \caption{Pipeline Validation Metrics}
+    \label{tab:pipeline_validation_metrics}
+    \begin{tabular}{llc}
+        \toprule
+        \textbf{Model Version} & \textbf{Metric} & \textbf{Value (\%)} \\
+        \midrule
+        \textbf{BORBANN\_PIPELINE\_2} 
+            & JSON Syntactic Validity & 91.67\% \\
+            & Pydantic Schema Conformance & 63.64\% \\
+        \midrule
+        \textbf{BORBANN\_PIPELINE\_3} 
+            & JSON Syntactic Validity & 100.00\% \\
+            & Pydantic Schema Conformance & 0.00\% \\
+        \midrule
+        \textbf{BORBANN\_PIPELINE\_4} 
+            & JSON Syntactic Validity & 100.00\% \\
+            & Pydantic Schema Conformance & 0.00\% \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+
+Table~\ref{tab:pipeline_validation_metrics} presents the validation performance of three pipeline variants. Among them, \texttt{borbann-pipeline-2} achieves the highest score in JSON syntactic validity (91.67\%), indicating that it produces well-formed JSON outputs most consistently. However, it performs best in this metric while showing only moderate conformance to the Pydantic schema (63.64\%).
+
+In contrast, both \texttt{borbann-pipeline-3} and \texttt{borbann-pipeline-4} attain perfect JSON syntactic validity (100\%) but fail completely in Pydantic schema conformance (0.00\%). This suggests that although their outputs are syntactically correct, they do not adhere to the expected canonical data structure.
+
+Based on this evaluation, we select \texttt{borbann-pipeline-2} as the final model for deployment. The superior schema adherence—despite not being perfect—makes it more suitable for downstream structured processing tasks.
+
+A possible reason for the low schema conformance in pipelines 3 and 4 may be suboptimal prompt design during fine-tuning. The model may have overfit to an incorrect or inconsistent output structure due to insufficient coverage of schema variations in the training data. This highlights the importance of prompt engineering and data diversity when fine-tuning large language models for structured output tasks.
