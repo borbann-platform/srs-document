@@ -488,7 +488,7 @@ Performance metrics are based on 2 metrics:
 
 \begin{table}[htbp]
     \centering
-    \caption{Pipeline Validation Metrics}
+    \caption{Model Validation Metrics}
     \label{tab:pipeline_validation_metrics}
     \begin{tabular}{llc}
         \toprule
@@ -514,6 +514,6 @@ Table~\ref{tab:pipeline_validation_metrics} presents the validation performance 
 
 In contrast, both \texttt{borbann-pipeline-3} and \texttt{borbann-pipeline-4} attain perfect JSON syntactic validity (100\%) but fail completely in Pydantic schema conformance (0.00\%). This suggests that although their outputs are syntactically correct, they do not adhere to the expected canonical data structure.
 
-Based on this evaluation, we select \texttt{borbann-pipeline-2} as the final model for deployment. The superior schema adherence—despite not being perfect—makes it more suitable for downstream structured processing tasks.
+Based on this evaluation, we select \texttt{borbann-pipeline-2} as the current model for deployment. The superior schema adherence—despite not being perfect—makes it more suitable for downstream structured processing tasks.
 
 A possible reason for the low schema conformance in pipelines 3 and 4 may be suboptimal prompt design during fine-tuning. The model may have overfit to an incorrect or inconsistent output structure due to insufficient coverage of schema variations in the training data. This highlights the importance of prompt engineering and data diversity when fine-tuning large language models for structured output tasks.
