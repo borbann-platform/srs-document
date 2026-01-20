@@ -130,48 +130,7 @@ User stories capture the essential needs and goals of the BorBann platform's tar
 	\bottomrule
 	\endlastfoot
 	  
-	\multicolumn{2}{l}{\textbf{Customizable Automated Data Integration Pipeline}} \\
-	\midrule
-	As a non-technical user, I want to input a website URL and have the system automatically generate a scraping configuration, so I can collect data without coding skills &
-	\begin{itemize}
-	\item System provides visual confirmation of detected data structure
-	\item Non-technical users can successfully create a working pipeline in under 5 minutes
-	\end{itemize} \\
-	  
-	\rowcolor[gray]{0.95} 
-	As a user, I want to paste multiple URLs from the same website pattern and have the system recognize the common structure, so I can efficiently collect data from similar pages &
-	\begin{itemize}
-	\item System identifies common patterns across multiple URLs from the same website
-	\item A single configuration works for all provided URLs from the same pattern
-	\end{itemize} \\
-	  
-	As a user, I want to upload data files (CSV, JSON) as alternative data sources to integrate with my scraped data &
-	\begin{itemize}
-	\item System accepts uploads of CSV and JSON files up to 50MB
-	\item Automatic schema detection for uploaded files with 90\% accuracy
-	\end{itemize} \\
-	  
-	\rowcolor[gray]{0.95}
-	As a user, I want to customize the output format and template via an intuitive UI &
-	\begin{itemize}
-	\item User can select from at least 4 output formats (JSON, CSV, SQLite, YAML)
-	\item UI provides visual preview of output format before confirmation
-	\end{itemize} \\
-	  
-	As a user, I want to schedule my data pipeline to run automatically at specified intervals &
-	\begin{itemize}
-	\item Interface allows setting schedule frequency (hourly, daily, weekly, monthly)
-	\item Timezone selection is available for scheduling
-	\end{itemize} \\
-	  
-	\rowcolor[gray]{0.95}
-	As a user, I want a dashboard showing all my data pipelines with their status and last run time &
-	\begin{itemize}
-	\item Dashboard displays all pipelines with status indicators
-	\item Last run time and next scheduled run are clearly shown
-	\end{itemize} \\
-	
-	\midrule
+
 	\multicolumn{2}{l}{\textbf{Local Contextual Analytics}} \\
 	\midrule
 	As a user, I can see all contextual data for specific areas to make informed decisions &
@@ -271,55 +230,37 @@ User stories capture the essential needs and goals of the BorBann platform's tar
 	As a user, I want to set a custom radius around a point on the map to analyze the surrounding area &
 	\begin{itemize}
 	\item User can place and adjust analysis radius on any map location
-	\item Contextual analytics update in real-time as radius is moved
+	\end{itemize} \\
+	\midrule
+	\multicolumn{2}{l}{\textbf{Site Analysis \& Catchment}} \\
+	\midrule
+	As a business owner, I want to see a site score for a specific category (e.g., Cafe) to evaluate commercial potential &
+	\begin{itemize}
+	\item System provides a 0-100 score based on magnets and competition
+	\item Analysis includes count of traffic drivers within 1km
 	\end{itemize} \\
 	
+	\rowcolor[gray]{0.95}
+	As a user, I want to visualize the 15-minute reachable area from a location to understand accessibility &
+	\begin{itemize}
+	\item Map displays an isochrone polygon for walking or driving
+	\item Polygon overlay includes estimated population reach
+	\end{itemize} \\
+
 	\midrule
-	\multicolumn{2}{l}{\textbf{Retrain Model with Data from Pipeline}} \\
+	\multicolumn{2}{l}{\textbf{Borbann AI Agent}} \\
 	\midrule
-	As a non-technical user, I want to select one of my existing data pipelines as a source for model training &
+	As a user, I want to ask natural language questions about properties and have the system execute the right tools to answer &
 	\begin{itemize}
-	\item User can select any active pipeline as a data source through a simple dropdown
-	\item System validates data compatibility before starting training process
+	\item Agent breaks down complex queries into steps (e.g., search, then calculate score)
+	\item UI shows the "thought process" and tools being used
 	\end{itemize} \\
-	  
+	
 	\rowcolor[gray]{0.95}
-	As a user, I want to select from recommended model types appropriate for my data &
+	As a user, I want to drag and drop a pin or draw a box on the map to define the search area for the agent &
 	\begin{itemize}
-	\item System suggests optimal model types based on data characteristics
-	\item Each model type includes a simple explanation of its strengths and use cases
-	\end{itemize} \\
-	  
-	As a user, I want to start the model training process with a single click after selecting my data sources &
-	\begin{itemize}
-	\item Training begins with a single action after configuration
-	\item System provides confirmation that training has started
-	\end{itemize} \\
-	  
-	\rowcolor[gray]{0.95}
-	As a user, I want to see how accurate my trained model is compared to platform default models &
-	\begin{itemize}
-	\item Performance metrics displayed with comparative benchmark against standard models
-	\item Visualizations show improvement or differences in prediction accuracy
-	\end{itemize} \\
-	  
-	As a user, I want to activate my newly trained model with a single click to apply it across the platform &
-	\begin{itemize}
-	\item Model activation changes system behavior immediately
-	\item Visual indicator shows which model is currently active
-	\end{itemize} \\
-	  
-	\rowcolor[gray]{0.95}
-	As a user, I want to see a list of all models I've trained with performance metrics and creation dates &
-	\begin{itemize}
-	\item Management interface displays all user models with key metadata
-	\item Models can be sorted and filtered by different attributes
-	\end{itemize} \\
-	  
-	As a user, I want to receive clear explanations if my pipeline data is unsuitable for training &
-	\begin{itemize}
-	\item System provides specific feedback about data quality issues
-	\item Suggestions for data improvements are provided when problems are detected
+	\item Agent recognizes the spatial context (coordinates or bounding box) from the UI action
+	\item Search results are constrained to the defined area
 	\end{itemize} \\
 	
 \end{longtable}
@@ -391,11 +332,10 @@ The BorBann platform provides the following primary functionalities:
 	      	\item \textit{Includes:} View Factor Influence
 	      \end{itemize}
 	      
-	\item \textbf{Configure Data Pipeline}  
-	      Enables setup of automated ingestion of external data from APIs and sources.  
+	\item \textbf{Interact with AI Agent}  
+	      Enables natural language queries and spatial context injection (pins/bbox) to orchestrate tools.  
 	      \begin{itemize}
-	      	\item \textit{Includes:} Process External Data Sources
-	      	\item \textit{Extended by:} Schedule Data Updates
+	      	\item \textit{Includes:} Site Analysis, Property Search
 	      \end{itemize}
 \end{itemize}
 
@@ -409,9 +349,6 @@ The following optional use cases extend the platform’s functionality:
 	      
 	\item \textbf{Set Custom Radius}  
 	      Adds user-defined range settings for map-based filtering and analysis.
-	      
-	\item \textbf{Schedule Data Updates}  
-	      Automates periodic refreshes of data pipelines using system scheduler logic.
 	      
 	\item \textbf{Check Environmental Risks}  
 	      Enables users to access data on environmental threats (e.g., flood zones, pollution).
@@ -662,109 +599,11 @@ This structure organizes the platform's key functions in a logical flow, making 
 Figure \ref{fig:homepage} shows the BorBann platform homepage, which provides an intuitive entry point to the system. The page presents the core value proposition with "Property Analytics Simplified" and briefly explains how BorBann helps users make data-driven real estate decisions through analytics, geospatial visualization, and market insights. Two primary action buttons - "Explore Map" and "Browse Properties" - enable quick access to key functionality. The lower section showcases three main analytics tools: Geospatial Visualization for interactive property mapping, Price Prediction with explainable AI features, and Data Pipeline for automated data collection and processing.
 
 %======================================================================
-\pagebreak
-\begin{figure}[h]
-\centering
-\includegraphics[width=1\textwidth]{assets/ui/data-pipelines-main.png}
-\caption{Data Pipeline Management Interface}
-\label{fig:data-pipelines}
-\end{figure}
 
-Figure \ref{fig:data-pipelines} showcases the Data Pipeline management dashboard, providing users with comprehensive control over their automated data collection processes. The interface features intuitive navigation with filtering options for Active, Paused, and All Pipelines, enabling efficient workflow management.
 
-Each pipeline card presents essential operational metrics including last run timestamp, next scheduled execution, number of data sources, and total records processed. This at-a-glance view allows users to quickly assess data freshness and monitor collection performance across multiple pipelines.
 
-\begin{figure}[h]
-\centering
-\includegraphics[width=1\textwidth]{assets/ui/data-pipelines-detailed-1.png}
-\caption{Data Integration Pipeline Detail - Overview}
-\label{fig:data-pipelines-detailed-1}
-\end{figure}
 
-Figure \ref{fig:data-pipelines-detailed-1} illustrates the pipeline detail view, highlighting key operational components including current status indicators, connected data sources, and available export formats. This overview provides users with immediate visibility into pipeline configuration and functionality.
 
-\begin{figure}[h]
-\centering
-\includegraphics[width=1\textwidth]{assets/ui/data-pipelines-detailed-2.png}
-\caption{Data Integration Pipeline Detail - Field Management}
-\label{fig:data-pipelines-detailed-2}
-\end{figure}
-
-Figure \ref{fig:data-pipelines-detailed-2} displays the field management section of the pipeline detail page. This interface empowers users to customize their data structure by managing output fields and creating derived fields through a visual formula builder. Users can transform raw data into meaningful metrics without writing code.
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=1\textwidth]{assets/ui/data-pipelines-detailed-data-preview.png}
-\caption{Data Integration Pipeline Detail - Output Data Preview}
-\label{fig:data-pipelines-detailed-data-preview}
-\end{figure}
-
-Figure \ref{fig:data-pipelines-detailed-data-preview} presents the data preview tab, where users can examine sample records generated by their pipeline. This real-time preview functionality allows users to validate data quality and structure before export or analysis.
-
-\pagebreak
-\begin{figure}[h]
-\centering
-\includegraphics[width=1\textwidth]{assets/ui/data-pipelines-detailed-export-data.png}
-\caption{Data Integration Pipeline Detail - Export Configuration}
-\label{fig:data-pipelines-detailed-export-data}
-\end{figure}
-
-Figure \ref{fig:data-pipelines-detailed-export-data} shows the export configuration interface, where users can precisely define output schemas for their data exports. This tab enables users to select specific fields, customize formatting, and choose from multiple export formats to meet their downstream requirements.
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=1\textwidth]{assets/ui/data-pipelines-detailed-run-history.png}
-\caption{Data Integration Pipeline Detail - Run History}
-\label{fig:data-pipelines-detailed-run-history}
-\end{figure}
-
-Figure \ref{fig:data-pipelines-detailed-run-history} displays the run history tab, providing a chronological log of pipeline executions. This audit trail includes execution timestamps, duration metrics, and status indicators, enabling users to monitor performance trends and troubleshoot any execution issues.
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=1\textwidth]{assets/ui/data-pipelines-detailed-pipeline-setting.png}
-\caption{Data Integration Pipeline Detail - Pipeline Settings}
-\label{fig:data-pipelines-detailed-pipeline-setting}
-\end{figure}
-
-\pagebreak
-Figure \ref{fig:data-pipelines-detailed-pipeline-setting} illustrates the pipeline settings tab, where users can configure automation parameters including execution schedules, notification preferences, and retry policies. These controls allow users to establish reliable data collection routines that align with their operational requirements.
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=1\textwidth]{assets/ui/data-pipelines-create.png}
-\caption{Data Integration Pipeline - Creation Interface}
-\label{fig:data-pipelines-create-1}
-\end{figure}
-
-Figure \ref{fig:data-pipelines-create-1} shows the pipeline creation interface where users input website URLs for automated data extraction. The form enables non-technical users to configure scraping operations without coding knowledge.
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=1\textwidth]{assets/ui/data-pipelines-create-2.png}
-\caption{Data Integration Pipeline - Advanced Configuration and Scheduling}
-\label{fig:data-pipelines-create-2}
-\end{figure}
-
-Figure \ref{fig:data-pipelines-create-2} displays automation settings for pipeline execution with scheduling options and AI-assisted extraction configuration. Users can set run frequency and notification preferences to maintain automated data collection.
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=1\textwidth]{assets/ui/models-models-list.png}
-\caption{Model Management Dashboard}
-\label{fig:models-models-list}
-\end{figure}
-
-Figure \ref{fig:models-models-list} presents the model management dashboard where users can view and control prediction models. The interface displays performance metrics and allows single-click model activation.
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=1\textwidth]{assets/ui/models-new-model.png}
-\caption{Model Creation Interface}
-\label{fig:models-new-model}
-\end{figure}
-
-Figure \ref{fig:models-new-model} shows the model creation interface for configuring new prediction models. Users can select data pipelines as training sources and choose from recommended algorithms with explanations of their strengths.
 
 \begin{figure}[h]
 \centering
