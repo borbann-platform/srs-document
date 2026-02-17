@@ -21,13 +21,13 @@
 \section{System Architecture Overview}
 %------------------------------
 
-The platform is a Retrieval-Augmented Generation (RAG) \& Tool-Use Agent system specialized for real estate. It follows a "ReAct" (Reasoning + Acting) architecture where a Large Language Model (Gemini) orchestrates specialized geospatial tools to answer user queries.
+The platform is a Retrieval-Augmented Generation (RAG) \& Tool-Use Agent system specialized for real estate. It follows a "ReAct" (Reasoning + Acting) architecture where a Large Language Model (Vertex AI Gemini) orchestrates specialized geospatial tools to answer user queries.
 
 \begin{itemize}
-    \item \textbf{Frontend:} React + TypeScript + MapLibre GL (Visualization) + TanStack Query.
+    \item \textbf{Frontend:} React + TypeScript + MapLibre GL + Deck.gl (High-performance Visualization) + TanStack Query.
     \item \textbf{Backend:} FastAPI (Python) + LangGraph (Agent Orchestration).
     \item \textbf{Database:} PostgreSQL + PostGIS (Spatial Indexing) + pgvector (Semantic Search).
-    \item \textbf{AI Model:} Google Gemini (LLM) + PyTorch Geometric (HGT Valuation Model - Offline).
+    \item \textbf{AI Model:} Google Vertex AI (LLM) + LightGBM (Production Valuation) + PyTorch Geometric (Experimental HGT).
 \end{itemize}
 
 %------------------------------

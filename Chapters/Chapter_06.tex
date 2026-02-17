@@ -1,0 +1,129 @@
+\chapter{Software Development}
+
+This chapter provides an overview of the software development process for the \textbf{Borbann} platform, detailing the key practices, technologies, and tools used to build and maintain the application. Effective software development is essential for creating a high-quality product that meets user needs and aligns with business goals. In this chapter, we discuss the chosen technology stack, the established coding standards, and the methodologies used throughout the development lifecycle.
+
+\section{Software Development Methodology}
+
+\subsection{Chosen Methodology}
+For the development of Borbann, we adopted an \textbf{Iterative and Incremental} development methodology. This approach allows the team to break down the complex requirements of a real estate AI platform into manageable components, delivering value in stages.
+
+Key reasons for selecting this methodology include:
+\begin{itemize}
+    \item \textbf{Flexibility:} Allows for adjustments based on model performance results (e.g., switching from baseline LightGBM to Graph Neural Networks).
+    \item \textbf{Continuous Integration:} Facilitated by tools like Dagger and Docker, ensuring that code changes are regularly tested and integrated.
+    \item \textbf{Parallel Development:} Enables the frontend and backend teams to work simultaneously on defined interfaces (APIs).
+\end{itemize}
+
+\subsection{Work Process}
+The work process follows a systematic approach to ensure efficiency and scalability, divided into key stages:
+
+\begin{enumerate}
+    \item \textbf{Requirement Analysis \& Feature Definition}
+    \begin{itemize}
+        \item Analyzing the needs for property valuation and location intelligence.
+        \item Defining core features such as the AI Valuation Model, Chat Agent, and Interactive Map.
+    \end{itemize}
+
+    \item \textbf{System Design \& Architecture}
+    \begin{itemize}
+        \item \textbf{Database Schema:} Designing geospatial tables using PostGIS to handle complex location data effectively.
+        \item \textbf{API Contract:} Defining RESTful endpoints using FastAPI's Pydantic models to ensure type safety between frontend and backend.
+    \end{itemize}
+
+    \item \textbf{Development Phase}
+    \begin{itemize}
+        \item \textbf{Backend \& AI:} Developing the GIS server, training production ML models (LightGBM + Hex2Vec), and exposing them via APIs.
+        \item \textbf{Frontend:} Building the interactive user interface with React and integrating map visualizations using Deck.gl and MapLibre.
+    \end{itemize}
+
+    \item \textbf{Testing \& CI/CD}
+    \begin{itemize}
+        \item Automated testing using \texttt{pytest} for backend and \texttt{vitest} for frontend.
+        \item Continuous integration pipelines managed by Dagger to ensure build stability.
+    \end{itemize}
+\end{enumerate}
+
+\section{Technology Stack}
+
+To develop the Borbann platform, we utilized a modern, performance-oriented technology stack optimized for geospatial data and AI workloads.
+
+\subsection{Frontend Development}
+\begin{itemize}
+    \item \textbf{React (v19):} A JavaScript library for building user interfaces, utilized with TypeScript for type safety.
+    \item \textbf{Vite:} A build tool that provides a fast development environment and optimized production builds.
+    \item \textbf{Tailwind CSS (v4):} A utility-first CSS framework for rapid and responsive UI design.
+    \item \textbf{TanStack Query \& Router:} For efficient server state management and client-side routing.
+    \item \textbf{Deck.gl \& MapLibre:} High-performance WebGL-powered libraries for rendering large-scale geospatial data and interactive maps.
+    \item \textbf{Radix UI:} A library of unstyled, accessible components for building high-quality design systems.
+\end{itemize}
+
+\subsection{Backend Development}
+\begin{itemize}
+    \item \textbf{Python (3.11+):} The primary programming language, chosen for its strong support in data science and web frameworks.
+    \item \textbf{FastAPI:} A modern, high-performance web framework for building APIs with Python, supporting asynchronous programming.
+    \item \textbf{SQLAlchemy \& GeoAlchemy2:} ORM tools for interacting with the database and handling spatial data types.
+    \item \textbf{UV:} A fast Python package installer and resolver significantly improving dependency management speed.
+\end{itemize}
+
+\subsection{Database Management}
+\begin{itemize}
+    \item \textbf{PostgreSQL:} A powerful, open-source object-relational database system.
+    \item \textbf{PostGIS:} A spatial database extender for PostgreSQL, essential for storing and querying location data (e.g., geometries, distances).
+\end{itemize}
+
+\subsection{AI \& Machine Learning}
+\begin{itemize}
+    \item \textbf{PyTorch \& PyG (Torch Geometric):} Used for developing and training Graph Neural Networks (Heterogeneous Graph Transformer).
+    \item \textbf{LightGBM:} A gradient boosting framework used for baseline property price prediction models.
+    \item \textbf{LangChain & LangGraph:} Frameworks for building the AI Chat Agent and orchestrating LLM interactions.
+    \item \textbf{MLflow:} Used for experiment tracking, model visioning, and managing the ML lifecycle.
+\end{itemize}
+
+\subsection{DevOps \& Tools}
+\begin{itemize}
+    \item \textbf{Docker:} Containerization platform ensuring consistent environments across development and production.
+    \item \textbf{Dagger:} A programmable CI/CD engine used to define and run delivery pipelines.
+    \item \textbf{Biome:} A fast formatter and linter for the frontend codebase.
+    \item \textbf{Make:} Automation tool used to simplify common tasks like starting the stack, running tests, and managing database migrations.
+\end{itemize}
+
+\section{Coding Standards}
+
+Coding standards are enforced to ensure maintainability, readability, and consistency across the codebase.
+
+\subsection{General Practices}
+\begin{itemize}
+    \item \textbf{Environment Security:} Sensitive configuration and credentials are managed via \texttt{.env} files and never committed to version control.
+    \item \textbf{Git LFS:} Large files, particularly ML models and datasets, are managed using Git Large File Storage.
+\end{itemize}
+
+\subsection{Backend Standards (Python)}
+\begin{itemize}
+    \item \textbf{Type Hinting:} Comprehensive use of Python type hints to improve code clarity and enable static analysis.
+    \item \textbf{Path Handling:} Usage of \texttt{pathlib} over \texttt{os.path} for robust, cross-platform file system operations.
+    \item \textbf{Modular Structure:} routes, models, and business logic are separated into distinct directories (\texttt{src/routes}, \texttt{src/models}, \texttt{src/services}).
+    \item \textbf{Package Management:} Strict usage of \texttt{uv} for adding and managing dependencies to ensure reproducible builds compared to standard pip.
+\end{itemize}
+
+\subsection{Frontend Standards (TypeScript/React)}
+\begin{itemize}
+    \item \textbf{Accessibility (a11y):} Strict adherence to WAI-ARIA guidelines (e.g., valid \texttt{role} attributes, meaningful \texttt{alt} text, keyboard navigability).
+    \item \textbf{Linting \& Formatting:} \texttt{Biome} is used to enforce code style and catch errors automatically.
+    \item \textbf{Component Structure:} Functional components using Hooks, with a focus on reusability and separation of concerns.
+    \item \textbf{Performance:} Utilization of \texttt{React.memo} and efficient state management to prevent unnecessary re-renders, especially for map components.
+\end{itemize}
+
+\section{Progress Tracking}
+
+Progress throughout the development lifecycle was tracked using a combination of version control analysis and task management.
+
+\subsection{Development Velocity}
+The project followed a phased implementation strategy:
+\begin{enumerate}
+    \item \textbf{Phase 1: Foundation.} Setup of the PostGIS database, Dagger pipelines, and basic FastAPI structure.
+    \item \textbf{Phase 2: Core ML.} Data processing pipelines, training of the LightGBM baseline, and initial HGT (Heterogeneous Graph Transformer) experiments.
+    \item \textbf{Phase 3: Integration.} Development of the React frontend, integration of Mapbox/Deck.gl for visualization, and connection to backend APIs.
+    \item \textbf{Phase 4: Refinement.} UI/UX improvements, implementation of the AI Chat Agent using LangGraph, and performance optimization.
+\end{enumerate}
+
+Regular commits and pull requests were used to maintain a steady stream of updates, with the `Makefile` serving as the central hub for running development tasks and continuous integration checks.

@@ -32,8 +32,8 @@ Real estate value is heavily driven by location. This engine acts as a specializ
 \end{itemize}
 
 \subsection*{3. Site Analysis \& Valuation}
-For commercial users, the Site Analysis component evaluates business potential by analyzing "Magnets" (traffic drivers) vs. "Competitors." 
-For residential users, the Valuation component provides price estimates. \textbf{Note:} The valuation model is currently operating in an offline capacity, with production endpoints serving mocked data for demonstration purposes while the HGT model undergoes calibration.
+For commercial users, the Site Analysis component evaluates business potential by analyzing "Magnets" (traffic drivers) vs. "Competitors."
+For residential users, the Valuation component provides price estimates using a multi-model approach. This includes a production-ready baseline model (LightGBM) enhanced with Hex2Vec embeddings for spatial context, ensuring reliable performance while advanced Graph Neural Networks (HGT) are being researched.
 
 \newpage
 
@@ -65,7 +65,8 @@ This section outlines the hierarchical structure of goals for our real estate va
 \subsection{AI Model Goals}
 \begin{itemize}
 	\item \textbf{Agent:} Correctly identify user intent and call the appropriate tool sequence 95\% of the time.
-	\item \textbf{Valuation (HGT):} Minimize Mean Absolute Error (MAE) on hold-out test sets (Offline Goal).
+	\item \textbf{Valuation (Hex2Vec + LightGBM):} Provide real-time price predictions with Mean Absolute Percentage Error (MAPE) below 15\% in production.
+    \item \textbf{Research (HGT):} Benchmark Heterogeneous Graph Transformer capabilities against the baseline for future deployment.
 \end{itemize}
 
 %------------------------------
@@ -137,7 +138,8 @@ The system is deployed as a containerized microservices architecture on Google C
     \item \textbf{Database:} Cloud SQL for PostgreSQL (handling PostGIS and pgvector workloads).
     \item \textbf{AI Models:}
     \begin{itemize}
-        \item \textbf{LLM:} Vertex AI (Gemini Pro) creates the reasoning capability.
-        \item \textbf{HGT Model:} Currently deployed as an offline batch process for research validation.
+        \item \textbf{LLM:} Vertex AI (Gemini Pro) for reasoning and tool orchestration.
+        \item \textbf{Production Model:} LightGBM regressor augmented with Hex2Vec spatial embeddings, served via FastAPI.
+        \item \textbf{Experimental Model:} Heterogeneous Graph Transformer (HGT) under active research for handling complex relationship modeling.
     \end{itemize}
 \end{itemize}

@@ -309,3 +309,6 @@ TSWLatexianTemp*
 
 node_modules
 .node_modules/*
+
+
+site-selection-core/*
