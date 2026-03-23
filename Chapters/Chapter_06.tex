@@ -9,7 +9,7 @@ For the development of Borbann, we adopted an \textbf{Iterative and Incremental}
 
 Key reasons for selecting this methodology include:
 \begin{itemize}
-    \item \textbf{Flexibility:} Allows for adjustments based on model performance results (e.g., switching from baseline LightGBM to Graph Neural Networks).
+    \item \textbf{Flexibility:} Allows adjustments based on model performance results, such as switching from baseline LightGBM to Graph Neural Networks.
     \item \textbf{Continuous Integration:} Facilitated by tools like Dagger and Docker, ensuring that code changes are regularly tested and integrated.
     \item \textbf{Parallel Development:} Enables the frontend and backend teams to work simultaneously on defined interfaces (APIs).
 \end{itemize}
@@ -43,6 +43,23 @@ The work process follows a systematic approach to ensure efficiency and scalabil
     \end{itemize}
 \end{enumerate}
 
+\section{System Architecture in Development Context}
+
+The software development process of BorBann is closely tied to its system architecture. The project is not implemented as a single monolithic application; rather, it is developed as an integrated platform in which frontend interaction, backend APIs, AI services, geospatial analytics, and database infrastructure evolve together. This architectural perspective is important during development because each implementation task must preserve the interfaces between these layers.
+
+Figure~\ref{fig:chapter6-system-architecture} shows the system architecture referenced during development.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{assets/software-design/software-architecture-diagram.jpg}
+    \caption{System Architecture Referenced During Software Development}
+    \label{fig:chapter6-system-architecture}
+\end{figure}
+
+From a development perspective, the frontend layer is responsible for interactive map rendering, property views, valuation workflows, and conversational user interfaces. The backend layer provides FastAPI-based endpoints that mediate access to prediction, location intelligence, search, authentication, and chat services. The service layer contains the AI-oriented and geospatial logic used to support valuation, explainability, and neighborhood scoring. Finally, the database and runtime asset layer store geospatial records, property data, and trained-model artifacts required by the application.
+
+This architecture influenced implementation planning in several ways. It enabled the frontend and backend to progress in parallel through clearly defined API contracts. It also encouraged service modularity so that price-prediction logic, explainability support, and geospatial processing could be improved without destabilizing unrelated parts of the platform. For this reason, the architecture served not only as a design artifact but also as a practical guide for incremental development.
+
 \section{Technology Stack}
 
 To develop the Borbann platform, we utilized a modern, performance-oriented technology stack optimized for geospatial data and AI workloads.
@@ -60,7 +77,7 @@ To develop the Borbann platform, we utilized a modern, performance-oriented tech
 \subsection{Backend Development}
 \begin{itemize}
     \item \textbf{Python (3.11+):} The primary programming language, chosen for its strong support in data science and web frameworks.
-    \item \textbf{FastAPI:} A modern, high-performance web framework for building APIs with Python, supporting asynchronous programming.
+    \item \textbf{FastAPI:} A modern, high-performance web framework for building APIs with Python and asynchronous programming support.
     \item \textbf{SQLAlchemy \& GeoAlchemy2:} ORM tools for interacting with the database and handling spatial data types.
     \item \textbf{UV:} A fast Python package installer and resolver significantly improving dependency management speed.
 \end{itemize}
@@ -113,6 +130,32 @@ Coding standards are enforced to ensure maintainability, readability, and consis
     \item \textbf{Performance:} Utilization of \texttt{React.memo} and efficient state management to prevent unnecessary re-renders, especially for map components.
 \end{itemize}
 
+\section{Model Iteration and Evaluation Framework}
+
+To ensure the reliability of the property valuation engine, the development process incorporated a structured model iteration and evaluation framework. This framework defines the datasets, cross-validation strategies, and model development stages referenced in the project's performance benchmarks.
+
+\subsection{Evaluation Datasets and Splits}
+Real estate data often suffers from spatial and temporal leakage. If a model is trained and tested on properties from the same building or the same timeframe, its apparent accuracy will be artificially inflated. To prevent this, the project evaluates models across distinct data configurations:
+\begin{itemize}
+    \item \textbf{\texttt{clean\_grouped}:} A filtered dataset with strict outlier removal applied to extreme price values. It is evaluated using a spatially grouped cross-validation split (e.g., grouped by geographic cell or project ID) to ensure the model generalizes to unseen locations rather than memorizing local data points.
+    \item \textbf{\texttt{all\_grouped}:} The complete, unfiltered dataset evaluated using the same spatially grouped cross-validation strategy. This tests the model's robustness against noisy, real-world data distributions.
+    \item \textbf{\texttt{clean\_time}:} The clean dataset evaluated using a time-based split (training on past data and testing on future data). This measures the model's temporal robustness and its ability to adapt to changing market trends.
+\end{itemize}
+
+\subsection{Model Development Stages (C-Series)}
+The predictive models were developed iteratively. Each major architectural or feature engineering change is denoted by a "C-stage" identifier to track progression:
+\begin{itemize}
+    \item \textbf{Early Baselines (C1 to C4):} Initial model iterations starting from basic structural features (C1) and progressively adding spatial context, such as Hex2Vec geographic embeddings (C4).
+    \item \textbf{Production Baseline (C5):} The current champion model architecture. The C5 stage combines structural features, Hex2Vec spatial embeddings, and listing-specific metadata (text-lite features). Evaluated using LightGBM, the C5 path provides the most stable balance of accuracy and reliability for both official treasury prices and market listings.
+    \item \textbf{Experimental Candidates (C6 Family):} Later iterations that introduced higher complexity but ultimately did not outperform the C5 baseline under strict validation. 
+    \begin{itemize}
+        \item \textbf{C6:} The baseline experimental model utilizing the expanded feature set or alternative tree backends (e.g., XGBoost).
+        \item \textbf{C6I:} The C6 model augmented with high-dimensional image embeddings (e.g., CLIP features extracted from property photos).
+        \item \textbf{C6IR:} The C6 model augmented with both image embeddings and residual correction techniques.
+    \end{itemize}
+\end{itemize}
+These stage definitions ensure that any model promoted to the production environment is supported by measurable benchmark evidence rather than assumed complexity benefits.
+
 \section{Progress Tracking}
 
 Progress throughout the development lifecycle was tracked using a combination of version control analysis and task management.
@@ -127,3 +170,28 @@ The project followed a phased implementation strategy:
 \end{enumerate}
 
 Regular commits and pull requests were used to maintain a steady stream of updates, with the `Makefile` serving as the central hub for running development tasks and continuous integration checks.
+
+\subsection{Rebuttal to Committee Review}
+
+After the committee review, the team converted each major concern into an implementation task and validated the result through code changes, evaluation scripts, and interface updates. The goal of this revision cycle was not only to answer comments in writing, but to improve the system in a measurable way.
+
+\begin{table}[htbp]
+    \centering
+    \small
+    \renewcommand{\arraystretch}{1.25}
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.24\textwidth}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{0.24\textwidth}}
+        \toprule
+        \rowcolor[gray]{0.9} \textbf{Issue Raised} & \textbf{Resolution in BorBann} & \textbf{Current Outcome} \\
+        \midrule
+        Proof and evaluation of price factors & Added stronger explainability support through per-request local SHAP factors, district and H3 comparison metrics, and an explainability evaluation pipeline that measures rank correlation, top-k overlap, perturbation faithfulness, and expected-feature coverage. & The valuation module now provides measurable evidence that major factors affect the prediction, instead of showing unsupported descriptive factors only. \\
+        Tooltip and data sources & Added reusable source tooltips and a source registry for key indicators such as rail transit, flood risk, POI-based signals, and valuation-related data. & Users can inspect the origin of major indicators directly from the interface, while the remaining placeholder links are tracked for completion. \\
+        UI colors and legend clarity & Added explicit score legends for location intelligence, trend legends for market insight cards, and clearer H3 legend support for map-based layers. & Visual components are easier to interpret and no longer rely only on unstated color meaning. \\
+        Protection against model hallucination & Kept the stable LightGBM plus Hex2Vec path as the production baseline, compared candidate models against benchmark acceptance gates, and added faithfulness checks and baseline comparisons for explanation quality. & We avoid promoting higher-risk models that do not outperform the baseline, and we provide a stronger basis for trusting the explanation output. \\
+        Chatbot retrieval accuracy & Improved chatbot grounding with spatial context injection, internal neighborhood knowledge, pgvector-based retrieval, referenced responses, and a golden-set quality benchmark. & Answer quality for location-specific questions is better grounded in evidence, and remaining misses are now visible through repeatable evaluation instead of anecdotal testing. \\
+        \bottomrule
+    \end{tabularx}
+    \caption{Summary of Issues and Resolutions in BorBann}
+    \label{tab:committee-rebuttal-summary}
+\end{table}
+
+In conclusion, the committee feedback led to practical improvements in explainability, transparency, interface readability, and chatbot grounding. Some items, especially full source-link completion and further chatbot quality recovery, still require continued refinement. However, the project now has clearer evidence, better user-facing guidance, and stronger validation workflows than in the earlier review stage.

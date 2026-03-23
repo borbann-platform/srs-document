@@ -1,8 +1,4 @@
 % Load your needed packages and other commands of yours here:
-\usepackage[firstpage=true]{background}
-\backgroundsetup{scale=1, angle=0, opacity=.1, contents ={ 
-% \includegraphics[width=14cm]{MBZUAI-Blue.eps}
-}}
 
 %--------------------------------------------------------------------------
 % Do NOT edit the rest of the preamble UNLESS YOU KNOW WHAT YOU'RE DOING!
@@ -21,10 +17,11 @@
 \makenomenclature 
 
 \usepackage{ifpdf}
-
-\newcommand{\href}[1]{#1} % does nothing, but defines the command so the print-optimized version will ignore \href tags
-
-\usepackage[\ifpdf pdftex,\fi pagebackref=false]{hyperref} % with basic options
+\ifpdf
+\usepackage[pdftex,pagebackref=false]{hyperref}
+\else
+\usepackage[pagebackref=false]{hyperref}
+\fi
 \ifthenelse{\boolean{PrintVersion}}{   % for improved print quality, change some hyperref options
 \hypersetup{	% override some previously defined hyperref options
     citecolor=black,%
@@ -61,3 +58,5 @@
 \usepackage{booktabs}
 \usepackage{colortbl}
 \usepackage{enumitem}
+\setlength{\emergencystretch}{3em}
+\hbadness=10000

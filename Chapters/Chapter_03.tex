@@ -109,7 +109,7 @@ Real estate agencies act as intermediaries between property buyers and sellers. 
 
 User stories capture the essential needs and goals of the BorBann platform's target users from their perspective. These stories follow the standard format: "As a [user type], I want to [action/feature] so that [benefit/value]."
 
-\begin{longtable}{>{\raggedright\arraybackslash}p{0.4\textwidth}>{\raggedright\arraybackslash}p{0.6\textwidth}}
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.38\textwidth}>{\raggedright\arraybackslash}p{0.56\textwidth}}
 	\caption{User Stories with Acceptance Criteria\label{tab:user-stories}}\\
 	  
 	\toprule \rowcolor[gray]{0.9}
@@ -225,19 +225,19 @@ User stories capture the essential needs and goals of the BorBann platform's tar
 	\item User can place and adjust analysis radius on any map location
 	\end{itemize} \\
 	\midrule
-	\multicolumn{2}{l}{\textbf{Site Analysis \& Catchment}} \\
+	\multicolumn{2}{l}{\textbf{Location Intelligence \& Livability Analysis}} \\
 	\midrule
-	As a business owner, I want to see a site score for a specific category (e.g., Cafe) to evaluate commercial potential &
+	As a user, I want to see livability scores for transit, walkability, and schools to evaluate neighborhood quality &
 	\begin{itemize}
-	\item System provides a 0-100 score based on magnets and competition
-	\item Analysis includes count of traffic drivers within 1km
+	\item System provides composite and sub-scores on a 0-100 scale
+	\item Scores are supported by clear indicators of local amenities
 	\end{itemize} \\
 	
 	\rowcolor[gray]{0.95}
-	As a user, I want to visualize the 15-minute reachable area from a location to understand accessibility &
+	As a user, I want to review environmental risks such as flood and noise exposure for a specific location &
 	\begin{itemize}
-	\item Map displays an isochrone polygon for walking or driving
-	\item Polygon overlay includes estimated population reach
+	\item System identifies potential flood warning zones
+	\item Risk indicators present historical or general exposure assessments
 	\end{itemize} \\
 
 	\midrule
@@ -328,7 +328,7 @@ The BorBann platform provides the following primary functionalities:
 	\item \textbf{Interact with AI Agent}  
 	      Enables natural language queries and spatial context injection (pins/bbox) to orchestrate tools.  
 	      \begin{itemize}
-	      	\item \textit{Includes:} Site Analysis, Property Search
+	      	\item \textit{Includes:} Location Intelligence, Property Search
 	      \end{itemize}
 \end{itemize}
 
@@ -444,7 +444,7 @@ The Use Case Model details the interactions depicted in the Use Case Diagram, de
 %   \label{tab:search-use-case}
 % \end{table}
 
-\begin{table}[h]
+\begin{table}[htbp]
 	\centering
 	\renewcommand{\arraystretch}{1.3}
 	\begin{tabular}{|>{\columncolor[gray]{0.95}}p{0.25\textwidth}|p{0.65\textwidth}|}
@@ -483,7 +483,7 @@ The Use Case Model details the interactions depicted in the Use Case Diagram, de
 	\label{tab:insights-use-case}
 \end{table}
 
-\begin{table}[h]
+\begin{table}[htbp]
 	\centering
 	\renewcommand{\arraystretch}{1.3}
 	\begin{tabular}{|>{\columncolor[gray]{0.95}}p{0.25\textwidth}|p{0.65\textwidth}|}
@@ -598,7 +598,7 @@ Figure \ref{fig:homepage} shows the BorBann platform homepage, which provides an
 
 
 
-\begin{figure}[h]
+\begin{figure}[htbp]
 \centering
 \includegraphics[width=1\textwidth]{assets/ui/map-page-main.png}
 \caption{Geospatial Visualization - Main Map Interface}
@@ -607,7 +607,7 @@ Figure \ref{fig:homepage} shows the BorBann platform homepage, which provides an
 
 Figure \ref{fig:map-page-main} displays the interactive property map with color-coded markers and navigation controls. The interface supports pan/zoom gestures and provides filtering options through the sidebar.
 
-\begin{figure}[h]
+\begin{figure}[htbp]
 \centering
 \begin{minipage}[b]{0.45\textwidth}
 \centering
@@ -628,7 +628,7 @@ Figure \ref{fig:map-page-analytic} shows environmental factor visualization thro
 
 Figure \ref{fig:map-page-property-detail} displays the popup that appears when users click map markers. This overlay provides immediate property information without requiring navigation away from the map.
 
-\begin{figure}[h]
+\begin{figure}[htbp]
 \centering
 \begin{minipage}[b]{0.45\textwidth}
 \centering
@@ -650,16 +650,16 @@ Figure \ref{fig:map-page-property-filter} shows basic property filtering control
 
 Figure \ref{fig:map-page-property-filter-advance} displays extended filtering options for specific amenities and neighborhood characteristics. These advanced parameters enable precise property matching based on detailed criteria.
 
-\begin{figure}[h]
+\begin{figure}[htbp]
 \centering
-\includegraphics[height=0.5\textwidth]{assets/ui/map-page-chatbot.png}
+\includegraphics[width=0.9\textwidth]{assets/ui/map-page-chatbot.png}
 \caption{Interactive Chatbot Assistant}
 \label{fig:map-page-chatbot}
 \end{figure}
 
 Figure \ref{fig:map-page-chatbot} shows the conversational assistant for property search and analysis. The chatbot handles natural language queries about properties and market conditions.
 
-\begin{figure}[h]
+\begin{figure}[htbp]
 \centering
 \includegraphics[width=1\textwidth]{assets/ui/explainable-property-detail.png}
 \caption{Explainable Price Prediction - Property Overview}
@@ -668,7 +668,7 @@ Figure \ref{fig:map-page-chatbot} shows the conversational assistant for propert
 
 Figure \ref{fig:explainable-property-detail} displays the initial analysis of property attributes in the prediction model. The interface includes interactive parameter sliders that show how changes to property characteristics affect the predicted price.
 
-\begin{figure}[h]
+\begin{figure}[htbp]
 \centering
 \includegraphics[width=1\textwidth]{assets/ui/explainable-feature-analysis.png}
 \caption{Explainable Price Prediction - Feature Importance Visualization}
@@ -677,7 +677,7 @@ Figure \ref{fig:explainable-property-detail} displays the initial analysis of pr
 
 Figure \ref{fig:explainable-feature-analysis} shows the contribution of different property features to the predicted price. The visualization uses color-coded bars to differentiate positive and negative factors with percentage impact values.
 
-\begin{figure}[h]
+\begin{figure}[htbp]
 \centering
 \includegraphics[width=1\textwidth]{assets/ui/explainable-market-comparison.png}
 \caption{Explainable Price Prediction - Comparative Market Analysis}
@@ -686,7 +686,7 @@ Figure \ref{fig:explainable-feature-analysis} shows the contribution of differen
 
 Figure \ref{fig:explainable-market-comparison} presents a comparison of the subject property against similar properties in the area. The table highlights key attributes and pricing metrics with supporting analysis of market positioning.
 
-\begin{figure}[h]
+\begin{figure}[htbp]
 \centering
 \includegraphics[width=1\textwidth]{assets/ui/explainable-environmental-factors.png}
 \caption{Explainable Price Prediction - Environmental Impact Analysis}
@@ -696,7 +696,7 @@ Figure \ref{fig:explainable-market-comparison} presents a comparison of the subj
 Figure \ref{fig:explainable-environmental-factors} analyzes environmental conditions and nearby amenities affecting property value. The interface displays flood risk, air quality, and proximity to key facilities with quantified impact on valuation.
 
 \pagebreak
-\begin{figure}[h]
+\begin{figure}[htbp]
 \centering
 \includegraphics[width=1\textwidth]{assets/ui/explainable-final-prediction.png}
 \caption{Explainable Price Prediction - Final Valuation with Confidence Range}
@@ -705,7 +705,7 @@ Figure \ref{fig:explainable-environmental-factors} analyzes environmental condit
 
 Figure \ref{fig:explainable-final-prediction} shows the final price prediction with confidence metrics and range indicators. The summary section explains how the valuation synthesizes insights from all analytical components.
 
-\begin{figure}[h]
+\begin{figure}[htbp]
 \centering
 \includegraphics[width=1\textwidth]{assets/ui/property-listing-main.png}
 \caption{Property Listings Page}
@@ -715,7 +715,7 @@ Figure \ref{fig:explainable-final-prediction} shows the final price prediction w
 Figure \ref{fig:property-listing-main} display property listings page with all listing that follow the filter tab the right.
 
 \pagebreak
-\begin{figure}[h]
+\begin{figure}[htbp]
 \centering
 \includegraphics[width=1\textwidth]{assets/ui/property-listing-analytics.png}
 \caption{Property Listings Page - Analytic Tab}

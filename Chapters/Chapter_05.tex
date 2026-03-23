@@ -2,144 +2,206 @@
 \chapter{AI Component Design}
 %======================================================================
 
-This chapter describes how Artificial Intelligence (AI) components are designed and
-integrated into the overall system. Each section starts with a clear objective and provides
-guidance on analysis, design, implementation, and evaluation of AI modules.
+This chapter describes the AI-related architecture implemented in \texttt{site-selection-core}. In the current system, the main AI functionality is organized around a workflow-driven conversational agent, deterministic location intelligence, and house price prediction with valuation-oriented explanation. The principal AI focus of the platform is residential property price estimation and interpretation.
 
-%------------------------------
-%------------------------------
+%----------------------------------------------------------------------
 \section{Business Context and AI Integration}
-%------------------------------
+%----------------------------------------------------------------------
 
 \begin{figure}[htbp]
-	\centering
-	\includegraphics[width=1\textwidth]{assets/system-workflow.png}
-	\caption{Overview system workflow (Updated)}
-	\label{fig:system-workflow}
+    \centering
+    \includegraphics[width=\textwidth]{assets/system-workflow.png}
+    \caption{Overall System Workflow}
+    \label{fig:system-workflow}
 \end{figure}
 
-Figure~\ref{fig:system-workflow} shows the overview of the system workflow. The Borbann AI Agent serves as the central orchestrator, leveraging multiple specialized engines to deliver insights. The AI integration focuses on three key components: Agentic Orchestration, Location Intelligence, and Offline Valuation.
+Figure~\ref{fig:system-workflow} shows the overall workflow of the platform. In the current implementation, AI is not introduced as a single isolated model. Instead, it is integrated across three tightly connected layers: conversational orchestration, geospatial scoring, and house price prediction. This design reflects the practical nature of real estate decision support, where the user usually needs a combination of search, explanation, neighborhood context, and price estimation rather than one standalone prediction.
 
-\subsection*{1. Borbann AI Agent (ReAct)}
-This is the primary interface for user interaction. Using a ReAct (Reasoning + Acting) pattern, the agent interprets natural language queries ("Is this area good for a cafe?" or "Find 3-bed condos") and orchestrates the necessary tools. This allows for dynamic, context-aware responses rather than static reports.
+Table~\ref{tab:chapter5-ai-overview} summarizes the AI-related subsystems that are actually implemented in the repository.
 
-\subsection*{2. Location Intelligence Engine}
-Real estate value is heavily driven by location. This engine acts as a specialized calculator, using widely recognized algorithms to score locations on:
-\begin{itemize}
-    \item \textbf{Transit:} Connectivity to BTS/MRT and bus networks.
-    \item \textbf{Walkability:} density of daily amenities (Groceries, Parks, Cafes).
-    \item \textbf{Risks:} Flood and Noise exposure levels.
-\end{itemize}
+\begin{table}[htbp]
+    \centering
+    \small
+    \renewcommand{\arraystretch}{1.25}
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.22\textwidth}>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}X}
+        \toprule
+        \rowcolor[gray]{0.9} \textbf{Subsystem} & \textbf{Implementation Form} & \textbf{Current Role in the Platform} \\
+        \midrule
+        Conversational agent & Workflow-based backend service with streaming chat API & Interprets user requests, loads session context, routes to the appropriate workflow, executes tools, and returns evidence-backed responses. \\
+        Location intelligence engine & Deterministic geospatial service & Produces composite location scores and interpretable sub-scores for transit, walkability, schools, flood risk, and noise exposure. \\
+        House price prediction engine & Pluggable prediction service with multiple model adapters & Generates property price estimates, confidence signals, district comparisons, feature contributions, and valuation-oriented output for the user interface. \\
+        Explainability layer & Runtime explanation formatting plus offline evidence loading & Exposes local factor explanations and benchmark-oriented explainability evidence for transparency and accountability. \\
+        Supporting geospatial analytics & Rule-based geospatial utility & Provides risk and environmental summaries, serving as secondary analytic utilities rather than the principal AI component of the system. \\
+        \bottomrule
+    \end{tabularx}
+    \caption{Current AI-Related Subsystems in the Implementation}
+    \label{tab:chapter5-ai-overview}
+\end{table}
 
-\subsection*{3. Site Analysis \& Valuation}
-For commercial users, the Site Analysis component evaluates business potential by analyzing "Magnets" (traffic drivers) vs. "Competitors."
-For residential users, the Valuation component provides price estimates using a multi-model approach. This includes a production-ready baseline model (LightGBM) enhanced with Hex2Vec embeddings for spatial context, ensuring reliable performance while advanced Graph Neural Networks (HGT) are being researched.
+The core AI problem addressed by BorBann is house price prediction and explanation, supported by a conversational interface and location-based analytics.
 
-\newpage
-
-%------------------------------
+%----------------------------------------------------------------------
 \section{Goal Hierarchy}
-%------------------------------
+%----------------------------------------------------------------------
 
-This section outlines the hierarchical structure of goals for our real estate valuation system.
+The goal hierarchy of the AI component can be understood from both strategic and operational perspectives.
+
+\subsection{Principal AI Components}
+
+The AI component of BorBann is organized around four principal implementation layers.
+
+First, the conversational agent is implemented as a workflow-driven orchestration service. Instead of relying on unconstrained response generation, the backend normalizes requests, routes them to workflows, executes tools, verifies results, and streams structured progress events such as \texttt{thinking}, \texttt{step}, \texttt{token}, \texttt{error}, and \texttt{done}. This design supports trustworthy interaction in a domain where many user queries depend on factual claims about prices, districts, and locations.
+
+Second, the location intelligence engine provides deterministic geospatial scoring. It computes interpretable indicators for transit accessibility, walkability, school access, flood risk, and noise exposure. Because these outputs are rule-based and spatially grounded, they can be validated and reused across property detail, map exploration, and valuation workflows.
+
+Third, the main predictive AI service is house price prediction. The repository implements a pluggable prediction architecture with a shared interface and lazy-loading model registry. The service supports baseline LightGBM prediction, Hex2Vec-enhanced prediction, and HGT-based prediction when the required model assets are available.
+
+Fourth, the valuation layer transforms prediction output into an end-user report. Instead of returning only one numeric estimate, the service also provides price range, confidence category, price per square meter, factor-level explanation, comparable nearby properties, district-level market context, and optional valuation-history persistence.
+
+Within this architecture, the principal AI contribution of the platform remains residential property price prediction and interpretation.
 
 \subsection{Organizational Goals}
+
 \begin{itemize}
-	\item To establish a trusted platform for geospatial intelligence.
-	\item To demonstrate the viability of Agentic AI in complex decision support.
+    \item To establish a trustworthy real estate information platform that integrates geospatial evidence, prediction, and explanation in one system.
+    \item To demonstrate that AI can support practical property decision making when combined with interpretable outputs and operational controls.
 \end{itemize}
 
 \subsection{System Goals}
+
 \begin{itemize}
-	\item To orchestrate diverse geospatial tools (PostGIS, OSMnx) via a unified Agent interface.
-	\item To deliver sub-second responses for location scoring queries.
-	\item To provide explainable "Site Scores" for business decision making.
+    \item To provide reliable AI-assisted workflows across chat, location intelligence, and valuation services.
+    \item To maintain a modular service architecture so that predictive backends can evolve without changing the external platform contract.
+    \item To support production-oriented deployment, observability, and operational governance for AI-enabled services.
 \end{itemize}
 
 \subsection{User Goals}
+
 \begin{itemize}
-	\item To gain instant, comprehensive insights about any map location without manual research.
-	\item To understand *why* a location is scored a certain way (e.g., "Transit score is high because of the new MRT line").
+    \item To allow users to ask property-related questions in natural language and receive grounded answers.
+    \item To help users understand neighborhood context through interpretable spatial indicators.
+    \item To provide understandable reasons behind estimated property values instead of only a single opaque output.
 \end{itemize}
 
 \subsection{AI Model Goals}
+
 \begin{itemize}
-	\item \textbf{Agent:} Correctly identify user intent and call the appropriate tool sequence 95\% of the time.
-	\item \textbf{Valuation (Hex2Vec + LightGBM):} Provide real-time price predictions with Mean Absolute Percentage Error (MAPE) below 15\% in production.
-    \item \textbf{Research (HGT):} Benchmark Heterogeneous Graph Transformer capabilities against the baseline for future deployment.
+    \item \textbf{Conversational agent:} route requests correctly, preserve session context, and use tools before making factual claims.
+    \item \textbf{Location intelligence:} produce stable and interpretable composite and sub-scores from explicit geospatial rules.
+    \item \textbf{House price prediction:} estimate residential property value from structural and spatial inputs while supporting multiple prediction backends.
+    \item \textbf{Valuation layer:} convert model output into a report suitable for end users through confidence signals, factor summaries, comparable properties, and district-level context.
 \end{itemize}
 
-%------------------------------
-\section{Task Requirements Analysis Using AI Canvas}
-%------------------------------
+Three predictor types are represented in the repository:
 
-\subsection{AI Task Requirements}
+\begin{table}[htbp]
+    \centering
+    \small
+    \renewcommand{\arraystretch}{1.25}
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.2\textwidth}>{\raggedright\arraybackslash}p{0.22\textwidth}>{\raggedright\arraybackslash}X}
+        \toprule
+        \rowcolor[gray]{0.9} \textbf{Predictor Type} & \textbf{Repository Representation} & \textbf{Role} \\
+        \midrule
+        Baseline & LightGBM-based baseline predictor & Provides the standard tabular price prediction path using spatial and structural property features. \\
+        Baseline + Hex2Vec & LightGBM predictor with Hex2Vec features & Extends the baseline with spatial embeddings to capture neighborhood context more richly. \\
+        HGT & Heterogeneous Graph Transformer adapter & Supports graph-based experimentation and can be selected when the required model assets are available. \\
+        \bottomrule
+    \end{tabularx}
+    \caption{Prediction Backends Exposed by the Current Price-Prediction Service}
+    \label{tab:chapter5-predictor-types}
+\end{table}
 
-\subsubsection*{1. Borbann AI Agent}
-\textbf{Requirements (REQ):} Interpret natural language, manage conversation state, and execute tools based on spatial context (pins/bboxes).
-\textbf{Specifications (SPEC):} LangGraph StateGraph with a prebuilt ReAct agent. Tools interact with PostGIS and Python service logic.
-\textbf{Environment (ENV):} Interactive web chat; requires handling of ambiguous user queries and potential tool execution failures.
+The runtime registry selects the best available predictor automatically according to model availability. In the present implementation, the default priority is HGT first, followed by the Hex2Vec-enhanced baseline, and then the plain baseline. This design supports experimentation without rewriting the service interface.
 
-\subsubsection*{2. Location Intelligence Scoring}
-\textbf{Requirements (REQ):} Calculate deterministic scores (0-100) for Transit, Walkability, and Schools.
-\textbf{Specifications (SPEC):}
-\begin{itemize}
-    \item \textit{Transit:} Distance decay function from rail stations ($<1km$) + bus stop density.
-    \item \textit{Walkability:} Presence of amenity categories within 800m.
-    \item \textit{Flood:} Point-in-polygon lookup against flood warning zones.
-\end{itemize}
-\textbf{Environment (ENV):} High-performance spatial query requirement; utilizes in-memory caching for grid-based pre-calculation.
+%----------------------------------------------------------------------
+\section{AI Task Requirements Analysis Using AI Canvas}
+%----------------------------------------------------------------------
 
-\subsubsection*{3. Commercial Site Analysis}
-\textbf{Requirements (REQ):} Evaluate the viability of a specific business type at a location.
-\textbf{Specifications (SPEC):} Heuristic formula: $Score = Base + (Magnets \times W_m) - (Competitors \times W_c)$.
-\textbf{Environment (ENV):} Dependent on up-to-date POI data in the \texttt{view\_all\_pois} table.
+This section presents the main AI tasks using the AI Canvas structure of Requirement, Specification, and Environment. In this chapter, the AI Canvas is described in narrative form rather than as a diagram because the current objective is to clarify the operational role of each AI component in the system.
 
-\newpage
+\subsection{Conversational Agent}
 
-%------------------------------
+\textbf{Requirement:} The conversational agent must interpret natural-language property questions, preserve session continuity, use tools before returning factual responses, and stream execution progress to the user interface.
+
+\textbf{Specification:} The implementation satisfies this requirement through workflow-based orchestration with request normalization, routing, typed tool execution, response composition, verification, session persistence, rolling summaries, and server-sent event streaming.
+
+\textbf{Environment:} The agent operates in an interactive multi-turn web environment with optional spatial attachments, authenticated sessions, model-provider variability, and the need to produce evidence-backed responses under practical latency constraints.
+
+\subsection{Location Intelligence Engine}
+
+\textbf{Requirement:} The location intelligence engine must produce stable, interpretable, and reusable indicators for accessibility, amenities, schools, flood risk, and environmental exposure.
+
+\textbf{Specification:} This requirement is addressed through deterministic geospatial scoring rules that compute transit, walkability, schools, flood, and noise outputs and combine them into a composite location score on a 0--100 scale.
+
+\textbf{Environment:} The component operates over spatial database queries involving Bangkok property data, points of interest, transit infrastructure, and environmental-risk datasets, and it is reused across property pages, valuation workflows, and map-based exploration.
+
+\subsection{House Price Prediction and Valuation}
+
+\textbf{Requirement:} The house price prediction component must estimate residential property prices from structural and spatial inputs while also supporting explanation-oriented outputs suitable for user-facing valuation reports.
+
+\textbf{Specification:} The implementation uses a pluggable predictor interface that supports baseline LightGBM, Hex2Vec-enhanced baseline, and HGT-based prediction paths. On top of this prediction layer, the valuation service provides price range, confidence category, comparable properties, district insights, and formatted factor descriptions.
+
+\textbf{Environment:} This component operates in a mixed real-estate data environment with spatial attributes, incomplete or evolving model artifacts, district-level variation, and a product context that requires both prediction quality and interpretability.
+
+%----------------------------------------------------------------------
 \section{User Experience Design with AI}
-%------------------------------
+%----------------------------------------------------------------------
 
-AI improves user experience by converting complex geospatial data into conversational insights and clear visualizations.
+The AI-related user experience is designed around clarity, guidance, and evidence presentation. The user is not expected to understand internal model architecture. Instead, the interface translates technical processing into practical outputs that support property exploration and decision making.
 
-\subsection{Agent-Driven Interaction}
-Instead of navigating complex filter menus, users chat with "Borbann AI."
-\begin{itemize}
-    \item \textbf{Scenario:} User drops a pin and asks "How is the flooding here?"
-    \item \textbf{Response:} The agent calls the \texttt{get\_flood\_risk} tool and replies, "This area is in a Yellow Warning zone, historically prone to flash floods during heavy rain."
-\end{itemize}
+Table~\ref{tab:chapter5-ux-ai} summarizes the main AI-supported user interactions.
 
-\subsection{Livability Dashboard}
-When selecting a location, users see a "Livability Report" card.
-\begin{itemize}
-    \item \textbf{Visuals:} Radar charts showing the balance between Transit, Leisure, and Schools.
-    \item \textbf{Interactivity:} Clicking a score (e.g., Transit) highlights the nearby stations contributing to that score on the map.
-\end{itemize}
+\begin{table}[htbp]
+    \centering
+    \small
+    \renewcommand{\arraystretch}{1.25}
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.22\textwidth}>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}X}
+        \toprule
+        \rowcolor[gray]{0.9} \textbf{User Interaction} & \textbf{AI or Analytic Support} & \textbf{Visible User Outcome} \\
+        \midrule
+        Conversational property inquiry & Workflow-based chat agent with tool-backed reasoning & The user can ask questions in natural language and receive structured answers grounded in retrieved evidence and platform data. \\
+        Property valuation request & Price-prediction and valuation service & The user receives an estimated price, confidence level, explanatory factors, nearby comparables, and district market context. \\
+        Property-level explanation review & Runtime explanation formatting and explainability evidence & The interface presents factor-level signals and explanation-oriented narrative rather than only one opaque number. \\
+        Neighborhood review & Location intelligence engine & The user sees interpretable sub-scores for accessibility and risk-related context around a property. \\
+        Location risk context & Rule-based geospatial analytics & Provides supporting risk and accessibility insights, such as flood mapping, apart from the central house-price AI workflow. \\
+        \bottomrule
+    \end{tabularx}
+    \caption{Main User Experience Flows Supported by AI or Analytics}
+    \label{tab:chapter5-ux-ai}
+\end{table}
 
-\subsection{Site Potential Analysis}
-For business users:
-\begin{itemize}
-    \item \textbf{Input:} Select "Cafe" and click a location.
-    \item \textbf{Output:} "Site Score: 78/100. High Potential. 3 Office Buildings nearby serves as magnets, with only 1 direct competitor within 500m."
-\end{itemize}
+This means that AI in BorBann is not presented as a separate experimental feature. It is embedded into normal user tasks such as asking questions, reviewing a property, understanding neighborhood conditions, and estimating value.
 
-%------------------------------
+%----------------------------------------------------------------------
 \section{Deployment Strategy}
-%------------------------------
+%----------------------------------------------------------------------
 
-\subsection{Deployment Plan}
-The system is deployed as a containerized microservices architecture on Google Cloud Platform.
+The production deployment architecture for the current implementation is based on a single-VPS model using Docker Compose, host-level Nginx, Tailscale-restricted administration, and GitHub Actions deployments through GitHub Container Registry (GHCR).
 
-\subsubsection{Components}
-\begin{itemize}
-    \item \textbf{Frontend:} Static asset serving (CDN).
-    \item \textbf{Backend API:} FastAPI service hosting the Agent Graph and Intelligence Engine.
-    \item \textbf{Database:} Cloud SQL for PostgreSQL (handling PostGIS and pgvector workloads).
-    \item \textbf{AI Models:}
-    \begin{itemize}
-        \item \textbf{LLM:} Vertex AI (Gemini Pro) for reasoning and tool orchestration.
-        \item \textbf{Production Model:} LightGBM regressor augmented with Hex2Vec spatial embeddings, served via FastAPI.
-        \item \textbf{Experimental Model:} Heterogeneous Graph Transformer (HGT) under active research for handling complex relationship modeling.
-    \end{itemize}
-\end{itemize}
+Table~\ref{tab:chapter5-deployment-architecture} summarizes the current deployment architecture.
+
+\begin{table}[htbp]
+    \centering
+    \small
+    \renewcommand{\arraystretch}{1.25}
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.2\textwidth}>{\raggedright\arraybackslash}p{0.24\textwidth}>{\raggedright\arraybackslash}X}
+        \toprule
+        \rowcolor[gray]{0.9} \textbf{Layer} & \textbf{Current Implementation} & \textbf{Operational Purpose} \\
+        \midrule
+        Public ingress & Host Nginx on ports 80 and 443 & Terminates public traffic and forwards requests to loopback-bound frontend and backend services. \\
+        Frontend service & Containerized frontend image & Serves the web interface and exposes only a loopback-bound host port in production. \\
+        Backend service & Containerized FastAPI image & Hosts chat, valuation, price prediction, location intelligence, authentication, and analytics endpoints. \\
+        Database layer & PostGIS database plus PgBouncer & Supports geospatial queries and connection pooling for application traffic. \\
+        Cache and object storage & Redis and MinIO & Provide shared caching and image or object storage support for runtime features. \\
+        Runtime data mounting & Mounted runtime data and model directories & Keeps large datasets and trained model assets outside the application image for smaller, code-focused deployments. \\
+        Private administration & Tailscale-restricted access & Limits SSH, database administration, and optional observability access to the private mesh network. \\
+        Deployment automation & GitHub Actions plus GHCR & Runs tests, builds images, pushes tagged artifacts, deploys over Tailscale SSH, performs health checks, and supports rollback. \\
+        \bottomrule
+    \end{tabularx}
+    \caption{Current Production Deployment Architecture}
+    \label{tab:chapter5-deployment-architecture}
+\end{table}
+
+This deployment design has several implications for the AI component. First, the AI services are packaged as part of the backend application rather than being deployed as isolated model-serving products. Second, heavy runtime assets such as trained models and geospatial data are mounted into the deployment environment, which reduces rebuild cost and separates code rollout from data synchronization. Third, deployment safety is improved through automated testing, image tagging, health checks, and rollback scripts.
+
+The CI/CD workflow runs backend and frontend validation, builds backend, frontend, and database images, pushes them to GHCR, connects to the production VPS through Tailscale, performs deployment by script, and then verifies service health. This deployment structure supports the operational requirements of the AI-enabled platform while preserving a practical and maintainable release process.
