@@ -285,7 +285,7 @@ The valuation component is one of the main deliverables of the project, so its r
 
 \subsection{Grouped Benchmark Result Table}
 
-Table \ref{tab:chapter7-model-benchmark-grouped} reports the grouped benchmark results from the canonical benchmark summary. These values show the absolute error and fit metrics used to compare the stable C5 path with later C6-family candidates.
+Table \ref{tab:chapter7-model-benchmark-grouped} reports the grouped benchmark results from the canonical benchmark summary. As detailed in Chapter 6, these benchmarks span the heavily filtered (\texttt{clean\_grouped}) and unfiltered (\texttt{all\_grouped}) datasets to measure robustness against localized data leakage. These values show the absolute error and fit metrics used to compare the stable C5 tabular baseline with later image-augmented and residual-corrected C6-family candidates.
 
 \begin{table}[htbp]
     \centering
@@ -329,7 +329,7 @@ Table \ref{tab:chapter7-model-delta} focuses on the percentage regression agains
     \label{tab:chapter7-model-delta}
 \end{table}
 
-Table \ref{tab:chapter7-model-time-split} adds the time-split check and the extra XGBoost comparison rows, which together complete the 12 canonical benchmark entries evaluated in the study.
+Table \ref{tab:chapter7-model-time-split} adds the time-split check (\texttt{clean\_time}), which verifies temporal generalization, and the extra XGBoost comparison rows, completing the 12 canonical benchmark entries evaluated in the study.
 
 \begin{table}[htbp]
     \centering

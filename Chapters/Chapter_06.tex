@@ -130,11 +130,37 @@ Coding standards are enforced to ensure maintainability, readability, and consis
     \item \textbf{Performance:} Utilization of \texttt{React.memo} and efficient state management to prevent unnecessary re-renders, especially for map components.
 \end{itemize}
 
+\section{Model Iteration and Evaluation Framework}
+
+To ensure the reliability of the property valuation engine, the development process incorporated a structured model iteration and evaluation framework. This framework defines the datasets, cross-validation strategies, and model development stages referenced in the project's performance benchmarks.
+
+\subsection{Evaluation Datasets and Splits}
+Real estate data often suffers from spatial and temporal leakage. If a model is trained and tested on properties from the same building or the same timeframe, its apparent accuracy will be artificially inflated. To prevent this, the project evaluates models across distinct data configurations:
+\begin{itemize}
+    \item \textbf{\texttt{clean\_grouped}:} A filtered dataset with strict outlier removal applied to extreme price values. It is evaluated using a spatially grouped cross-validation split (e.g., grouped by geographic cell or project ID) to ensure the model generalizes to unseen locations rather than memorizing local data points.
+    \item \textbf{\texttt{all\_grouped}:} The complete, unfiltered dataset evaluated using the same spatially grouped cross-validation strategy. This tests the model's robustness against noisy, real-world data distributions.
+    \item \textbf{\texttt{clean\_time}:} The clean dataset evaluated using a time-based split (training on past data and testing on future data). This measures the model's temporal robustness and its ability to adapt to changing market trends.
+\end{itemize}
+
+\subsection{Model Development Stages (C-Series)}
+The predictive models were developed iteratively. Each major architectural or feature engineering change is denoted by a "C-stage" identifier to track progression:
+\begin{itemize}
+    \item \textbf{Early Baselines (C1 to C4):} Initial model iterations starting from basic structural features (C1) and progressively adding spatial context, such as Hex2Vec geographic embeddings (C4).
+    \item \textbf{Production Baseline (C5):} The current champion model architecture. The C5 stage combines structural features, Hex2Vec spatial embeddings, and listing-specific metadata (text-lite features). Evaluated using LightGBM, the C5 path provides the most stable balance of accuracy and reliability for both official treasury prices and market listings.
+    \item \textbf{Experimental Candidates (C6 Family):} Later iterations that introduced higher complexity but ultimately did not outperform the C5 baseline under strict validation. 
+    \begin{itemize}
+        \item \textbf{C6:} The baseline experimental model utilizing the expanded feature set or alternative tree backends (e.g., XGBoost).
+        \item \textbf{C6I:} The C6 model augmented with high-dimensional image embeddings (e.g., CLIP features extracted from property photos).
+        \item \textbf{C6IR:} The C6 model augmented with both image embeddings and residual correction techniques.
+    \end{itemize}
+\end{itemize}
+These stage definitions ensure that any model promoted to the production environment is supported by measurable benchmark evidence rather than assumed complexity benefits.
+
 \section{Progress Tracking}
 
 Progress throughout the development lifecycle was tracked using a combination of version control analysis and task management.
 
-\subsection{6.4.1 Development Velocity}
+\subsection{Development Velocity}
 The project followed a phased implementation strategy:
 \begin{enumerate}
     \item \textbf{Phase 1: Foundation.} Setup of the PostGIS database, Dagger pipelines, and basic FastAPI structure.
@@ -145,7 +171,7 @@ The project followed a phased implementation strategy:
 
 Regular commits and pull requests were used to maintain a steady stream of updates, with the `Makefile` serving as the central hub for running development tasks and continuous integration checks.
 
-\subsection{6.4.2 Rebuttal to Committee Review}
+\subsection{Rebuttal to Committee Review}
 
 After the committee review, the team converted each major concern into an implementation task and validated the result through code changes, evaluation scripts, and interface updates. The goal of this revision cycle was not only to answer comments in writing, but to improve the system in a measurable way.
 
