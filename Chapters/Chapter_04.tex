@@ -2,126 +2,72 @@
 \chapter{Software Architecture Design}
 %======================================================================
 
-% %----------------------------------------------------------------------
-% \section{Stakeholder Analysis}
-% %----------------------------------------------------------------------
+This chapter presents the core software-design artifacts used to describe the BorBann platform. The purpose of this chapter is to show the structural and behavioral design of the system before implementation details are discussed in later chapters. The design is presented through four complementary views: the domain model, the design class diagram, the sequence diagram, and the overall system architecture.
 
-% The successful implementation of the BorBann platform requires a understanding of all parties who may influence or be affected by the system. This stakeholder analysis identifies key individuals and groups, their interests, influence levels, and specific requirements.
+%----------------------------------------------------------------------
+\section{Domain Model}
+%----------------------------------------------------------------------
 
-%------------------------------
-% \section{Domain Model}
-%------------------------------
+The domain model describes the main problem-space entities involved in the BorBann platform and the relationships among them. In this project, the domain includes real-estate properties, user sessions, valuation requests, geospatial context, AI-assisted interactions, and supporting analytic outputs. These concepts define the information structure required to support property exploration, valuation, and conversational assistance.
 
-%------------------------------
-% \section{Design Class Diagram}
-%------------------------------
+Figure~\ref{fig:chapter4-domain-model} illustrates the domain model used in the system design.
 
-%------------------------------
-%------------------------------
-\section{System Architecture Overview}
-%------------------------------
-
-The platform is a Retrieval-Augmented Generation (RAG) \& Tool-Use Agent system specialized for real estate. It follows a "ReAct" (Reasoning + Acting) architecture where a Large Language Model (Vertex AI Gemini) orchestrates specialized geospatial tools to answer user queries.
-
-\begin{itemize}
-    \item \textbf{Frontend:} React + TypeScript + MapLibre GL + Deck.gl (High-performance Visualization) + TanStack Query.
-    \item \textbf{Backend:} FastAPI (Python) + LangGraph (Agent Orchestration).
-    \item \textbf{Database:} PostgreSQL + PostGIS (Spatial Indexing) + pgvector (Semantic Search).
-    \item \textbf{AI Model:} Google Vertex AI (LLM) + LightGBM (Production Valuation) + PyTorch Geometric (Experimental HGT).
-\end{itemize}
-
-%------------------------------
-\section{Feature Implementation Details}
-%------------------------------
-
-\subsection{Borbann AI Agent (The Core)}
-\paragraph{User Experience:}
-Users interact via a chat panel overlaying the map. They can attach spatial context (dropping a pin or drawing a bounding box) which is sent to the agent. The UI visualizes the agent's "thought process" by showing which tools are being called (e.g., "Searching properties...", "Calculating transit score...") before streaming the final Markdown response.
-
-\paragraph{Technical Implementation:}
-\begin{itemize}
-    \item \textbf{Orchestration:} Implemented in \texttt{src/services/agent\_graph.py} using LangGraph.
-    \item \textbf{State Machine:} Uses a \texttt{prebuilt.create\_react\_agent} that manages the conversation history and tool execution loop.
-    \item \textbf{Context Injection:}
-    \begin{itemize}
-        \item \textit{System Prompt:} Defines the agent's persona ("Borbann AI"), capabilities, and strict response formatting.
-        \item \textit{Spatial Context:} Coordinates (lat, lon) or Bounding Boxes (bbox) from the frontend are injected into the tool arguments.
-    \end{itemize}
-    \item \textbf{Tools:} The agent has access to a registry of Python functions decorated with \texttt{@tool} for automatic schema generation.
-\end{itemize}
-
-\subsection{Location Intelligence Engine}
-\paragraph{User Experience:}
-Users view a "Livability Report" for any specific point, displaying scores (0-100) for Transit, Walkability, and Schools, along with Flood and Noise risk levels.
-
-\paragraph{Technical Implementation:}
-A weighted composite scoring system (Weights: Transit 25\%, Walkability 25\%, Schools 20\%, Flood 15\%, Noise 15\%).
-\begin{itemize}
-    \item \textbf{Transit Score:} Queries \texttt{transit\_stops} (PostGIS) for nearest rail (<1km), counts bus stops within 500m. Scoring uses a distance decay function.
-    \item \textbf{Walkability Score:} Checks density of 8 amenity categories (Restaurants, Cafes, Groceries, Parks, etc.) within 800m using \texttt{view\_all\_pois}.
-    \item \textbf{Schools Score:} Queries schools table within 2km, with bonuses for variety of levels.
-    \item \textbf{Flood Risk:} Point-in-polygon check against static flood-warning datasets.
-    \item \textbf{Caching:} Uses an in-memory dictionary cache keyed by lat/lon grid to prevent re-calculation.
-\end{itemize}
-
-\subsection{Site Analysis (Commercial Viability)}
-\paragraph{User Experience:}
-Business owners select a location and a category (e.g., "Cafe"). The system outputs a "Site Score" indicating commercial potential.
-
-\paragraph{Technical Implementation:}
-\begin{itemize}
-    \item \textbf{Magnets:} Counts traffic drivers (Malls, Offices, Transit) within 1km.
-    \item \textbf{Competitors:} Counts existing businesses of the same category within 1km.
-    \item \textbf{Heuristic Formula:} $Score = 50 + (Magnets \times 3) - (Competitors \times 2)$.
-    \item \textbf{Traffic Potential:} Classified as High/Medium/Low based purely on Magnet count.
-\end{itemize}
-
-\subsection{Catchment Analysis (Isochrones)}
-\paragraph{User Experience:}
-Displays a polygon on the map representing "How far can I walk/drive in 15 minutes?"
-
-\paragraph{Technical Implementation:}
-\begin{itemize}
-    \item \textbf{Graph Engine:} Uses OSMnx to load the Bangkok road network graph.
-    \item \textbf{Isochrone Generation:} Finds nearest graph node, traverses network based on edge weights (length/speed), and calculates Convex Hull.
-    \item \textbf{Population Est:} User PostGIS \texttt{ST\_Intersection} to overlay polygon on population grid.
-\end{itemize}
-
-\subsection{Property Search \& Market Stats}
-\paragraph{User Experience:} "Find me 3-bedroom houses in Watthana under 10MB."
-\paragraph{Technical Implementation:}
-\begin{itemize}
-    \item \textbf{Search:} Direct translation of natural language parameters into a SQLAlchemy/PostGIS query on the \texttt{house\_prices} table.
-    \item \textbf{Market Stats:} Aggregation queries (AVG, COUNT, MIN, MAX) grouped by district.
-\end{itemize}
-
-%------------------------------
-\section{Data Schema \& PostGIS Usage}
-%------------------------------
-
-The system relies heavily on PostGIS for high-performance spatial queries.
-
-\begin{table}[htbp]
+\begin{figure}[htbp]
     \centering
-    \begin{tabular}{lll}
-        \toprule
-        \textbf{Table} & \textbf{Geometry Type} & \textbf{Usage} \\
-        \midrule
-        house\_prices & POINT & Core listing data. Spatial indexing for search. \\
-        view\_all\_pois & POINT & Unified view of all amenities. \\
-        transit\_stops & POINT & Specific transit analysis. \\
-        population\_grid & POLYGON & 1km x 1km population density grid. \\
-        \bottomrule
-    \end{tabular}
-    \caption{PostGIS Table Usage}
-    \label{tab:postgis-usage}
-\end{table}
+    \includegraphics[width=\textwidth]{assets/software-design/domain-model.png}
+    \caption{Domain Model of the BorBann Platform}
+    \label{fig:chapter4-domain-model}
+\end{figure}
 
-% \subsection{Integration Architecture}
-% Each component integrate with each other to form a comprehensive analytics system:
-% \begin{itemize}
-%     \item The Data Integration Pipeline feeds data to the Local Contextual Analytics system
-%     \item Local Contextual Analytics provides features to the Explainable Price Prediction Model
-%     \item The Retraining Model uses data from the pipeline to create customized predictions
-%     \item All components share a common data model that enables smooth information flow
-% \end{itemize}
+The model centers on the property as the primary business entity. A property is associated with location attributes, valuation-related features, market context, and user interactions. Users may search for properties, request valuations, inspect neighborhood intelligence, and interact with the conversational agent. These actions produce derived outputs such as price estimates, explanation factors, comparable-property summaries, and location-intelligence scores. The domain model therefore captures both persistent business entities and transient analysis artifacts that are required for the platform to function as an intelligent decision-support system.
+
+%----------------------------------------------------------------------
+\section{Design Class Diagram}
+%----------------------------------------------------------------------
+
+The design class diagram translates the domain concepts into software-level structures. It shows the principal classes, services, and interface boundaries used to organize the implementation. In BorBann, the design emphasizes modularity between frontend interaction, backend routing, AI services, geospatial services, and persistence layers.
+
+Figure~\ref{fig:chapter4-class-diagram} presents the design class diagram.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{assets/software-design/class-diagram.png}
+    \caption{Design Class Diagram for BorBann}
+    \label{fig:chapter4-class-diagram}
+\end{figure}
+
+The diagram reflects a service-oriented internal structure. Route handlers receive requests from the frontend and delegate work to specialized service classes such as the price-prediction service, location-intelligence service, and agent-related orchestration services. Model classes define the data exchanged across these layers, while the persistence layer manages database interaction and storage. This separation improves maintainability and allows predictive components, geospatial analytics, and user-facing APIs to evolve without tightly coupling all parts of the system.
+
+%----------------------------------------------------------------------
+\section{Sequence Diagram}
+%----------------------------------------------------------------------
+
+The sequence diagram describes the order of interaction among the main system components during a representative user workflow. For BorBann, an important scenario is the user request for property-related analysis through the frontend, followed by backend processing, service invocation, data retrieval, and response generation.
+
+Figure~\ref{fig:chapter4-sequence-diagram} shows the sequence diagram for the system.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{assets/software-design/sequence-diagram.png}
+    \caption{Sequence Diagram of a Typical BorBann Interaction}
+    \label{fig:chapter4-sequence-diagram}
+\end{figure}
+
+This interaction begins when the user initiates an action from the frontend interface, such as a valuation request, property lookup, or agent-assisted question. The request is transmitted to the backend API, which validates input and delegates the task to the relevant service layer. The selected service then communicates with the database, model runtime, or geospatial logic as needed. Once the required outputs are generated, the response is returned to the frontend and rendered as property details, valuation results, location scores, or conversational feedback. The sequence diagram highlights the coordinated processing required to combine multiple subsystems into one coherent user interaction.
+
+%----------------------------------------------------------------------
+\section{System Architecture}
+%----------------------------------------------------------------------
+
+The system architecture provides the highest-level technical view of BorBann. It describes how the frontend, backend, database, AI services, and supporting infrastructure operate together as a complete platform. This view is important because BorBann is not a single-model application; instead, it integrates user interaction, geospatial processing, valuation logic, and explainability support within one multi-layer software system.
+
+Figure~\ref{fig:chapter4-system-architecture} presents the system architecture of the platform.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{assets/software-design/software-architecture-diagram.jpg}
+    \caption{System Architecture of BorBann}
+    \label{fig:chapter4-system-architecture}
+\end{figure}
+
+At the presentation layer, the frontend provides map-based exploration, property viewing, valuation workflows, and conversational interaction. The application layer is implemented through FastAPI services that expose endpoints for authentication, property access, chat, valuation, price prediction, and geospatial analytics. These services coordinate with model-oriented and geospatial service layers, which perform prediction, explanation handling, and location scoring. At the data layer, PostgreSQL with PostGIS stores spatially enabled real-estate and point-of-interest data, while related runtime assets and models support valuation and AI-driven responses. This layered architecture enables BorBann to integrate interactive web functionality with AI-enabled decision support in a structured and extensible manner.

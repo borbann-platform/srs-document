@@ -1,0 +1,199 @@
+%======================================================================
+\appendix
+\chapter{Calculation Formula Reference}
+%======================================================================
+
+This appendix documents the main calculation logic used by the delivered BorBann analytics components. It starts with the location intelligence formulas because these scores appear throughout the property detail, valuation, and agent-assisted workflows.
+
+%----------------------------------------------------------------------
+\section{Location Intelligence Composite Score}
+%----------------------------------------------------------------------
+
+The location intelligence service combines five component scores into one composite score on a 0--100 scale. According to the implementation in the backend location intelligence service, the composite score is computed as a weighted sum:
+
+\begin{equation}
+\label{eq:appendix-location-composite}
+\text{Composite Score} = 0.25T + 0.25W + 0.20S + 0.15F + 0.15N
+\end{equation}
+
+where:
+
+\begin{itemize}
+    \item $T$ is the transit score,
+    \item $W$ is the walkability score,
+    \item $S$ is the schools score,
+    \item $F$ is the normalized flood score,
+    \item $N$ is the normalized noise score.
+\end{itemize}
+
+The implementation converts the final result to an integer before returning it in the API response.
+
+Table \ref{tab:appendix-location-weights} summarizes the exact factor weights used in the composite calculation.
+
+\begin{table}[htbp]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.36\textwidth}>{\raggedleft\arraybackslash}X}
+        \toprule
+        \rowcolor[gray]{0.9} \textbf{Component} & \textbf{Weight} \\
+        \midrule
+        Transit score & 0.25 \\
+        Walkability score & 0.25 \\
+        Schools score & 0.20 \\
+        Flood score & 0.15 \\
+        Noise score & 0.15 \\
+        \bottomrule
+    \end{tabularx}
+    \caption{Location Intelligence Composite Weights}
+    \label{tab:appendix-location-weights}
+\end{table}
+
+%----------------------------------------------------------------------
+\section{Transit Score Formula}
+%----------------------------------------------------------------------
+
+The transit score is an additive score capped at 100 points. It is based on three sources of transport accessibility: nearest rail access, number of bus stops within 500 meters, and optional ferry access.
+
+\begin{equation}
+\label{eq:appendix-transit-score}
+T = \min(100, T_{rail} + T_{bus} + T_{ferry})
+\end{equation}
+
+with component rules defined as follows:
+
+\begin{equation}
+T_{rail} =
+\begin{cases}
+40, & d_{rail} \leq 400 \\
+30, & 400 < d_{rail} \leq 800 \\
+20, & 800 < d_{rail} \leq 1000 \\
+0, & \text{otherwise}
+\end{cases}
+\end{equation}
+
+\begin{equation}
+T_{bus} =
+\begin{cases}
+30, & b \geq 5 \\
+20, & 3 \leq b < 5 \\
+10, & 1 \leq b < 3 \\
+0, & b = 0
+\end{cases}
+\end{equation}
+
+\begin{equation}
+T_{ferry} =
+\begin{cases}
+20, & d_{ferry} \leq 500 \\
+10, & 500 < d_{ferry} \leq 1000 \\
+0, & \text{otherwise}
+\end{cases}
+\end{equation}
+
+where $d_{rail}$ is the distance in meters to the nearest rail station, $b$ is the number of bus stops within 500 meters, and $d_{ferry}$ is the distance in meters to the nearest ferry pier.
+
+%----------------------------------------------------------------------
+\section{Schools Score Formula}
+%----------------------------------------------------------------------
+
+The schools score is based on the number of schools found within 2 kilometers, with an additional bonus for educational variety.
+
+\begin{equation}
+\label{eq:appendix-schools-score}
+S = \min(100, S_{count} + S_{variety})
+\end{equation}
+
+The count-based component is:
+
+\begin{equation}
+S_{count} =
+\begin{cases}
+80, & n \geq 10 \\
+60, & 5 \leq n < 10 \\
+40, & 2 \leq n < 5 \\
+20, & n = 1 \\
+0, & n = 0
+\end{cases}
+\end{equation}
+
+The variety bonus is:
+
+\begin{equation}
+S_{variety} =
+\begin{cases}
+20, & v \geq 3 \\
+10, & v = 2 \\
+0, & v \leq 1
+\end{cases}
+\end{equation}
+
+where $n$ is the total number of schools within 2 kilometers and $v$ is the number of detected school-level categories.
+
+%----------------------------------------------------------------------
+\section{Walkability Score Formula}
+%----------------------------------------------------------------------
+
+The walkability score evaluates eight amenity categories within 800 meters: restaurant, cafe, grocery, pharmacy, bank, park, gym, and retail. Each category contributes points based on whether at least one or at least three amenities are present.
+
+\begin{equation}
+\label{eq:appendix-walkability-score}
+W = \min\left(100, \sum_{i=1}^{8} w_i \right)
+\end{equation}
+
+For each category $i$:
+
+\begin{equation}
+w_i =
+\begin{cases}
+12.5, & c_i \geq 3 \\
+8, & 1 \leq c_i < 3 \\
+0, & c_i = 0
+\end{cases}
+\end{equation}
+
+where $c_i$ is the number of amenities found in category $i$.
+
+%----------------------------------------------------------------------
+\section{Flood and Noise Normalization}
+%----------------------------------------------------------------------
+
+Flood and noise are first classified qualitatively and then converted into normalized numerical values for the composite score.
+
+The flood normalization used in the implementation is:
+
+\begin{equation}
+F =
+\begin{cases}
+100, & \text{low flood risk} \\
+50, & \text{medium flood risk} \\
+20, & \text{high flood risk} \\
+50, & \text{unknown}
+\end{cases}
+\end{equation}
+
+The noise normalization used in the implementation is:
+
+\begin{equation}
+N =
+\begin{cases}
+100, & \text{quiet} \\
+70, & \text{moderate} \\
+40, & \text{busy} \\
+50, & \text{unknown}
+\end{cases}
+\end{equation}
+
+The noise class itself is determined from the minimum detected distance to the major-road proxy used by the service.
+
+\begin{equation}
+\text{Noise Level} =
+\begin{cases}
+\text{busy}, & d < 100 \\
+\text{moderate}, & 100 \leq d < 300 \\
+\text{quiet}, & d \geq 300
+\end{cases}
+\end{equation}
+
+where $d$ is the minimum available distance in meters to the road-noise proxy source.
+
+These formulas explain how BorBann transforms raw geospatial evidence into a single interpretable location score that can be shown in the UI and reused by other workflows such as valuation and agent-assisted property analysis.

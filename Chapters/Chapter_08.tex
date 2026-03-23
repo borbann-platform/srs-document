@@ -1,0 +1,62 @@
+%======================================================================
+\chapter{Conclusion and Discussion}
+%======================================================================
+
+%----------------------------------------------------------------------
+\section{Conclusion}
+%----------------------------------------------------------------------
+
+BorBann delivers a unified real estate information platform that combines data integration, geospatial analysis, explainable price prediction, and AI-assisted interaction in one system. The project addresses an important problem in the Thai real estate context, where useful information is often fragmented across separate platforms and difficult to compare. By bringing together listings, public records, location intelligence, and model-based valuation, the platform gives users a clearer basis for decision making.
+
+From the implementation and evaluation results, the project demonstrates several practical outcomes. First, the system can support map-based property exploration together with localized indicators such as transit access, walkability, school access, flood risk, and noise exposure. Second, the valuation module provides not only an estimated price but also supporting signals that help users understand why the result is produced. Third, the AI chat workflow improves accessibility for non-technical users because they can ask questions in natural language instead of relying only on manual filtering.
+
+The project also shows the importance of disciplined validation. Benchmark results indicate that the stable LightGBM baseline remains more suitable for deployment than more complex experimental candidates under the current data conditions. In the same way, chatbot quality and performance results demonstrate that AI features must be monitored with explicit tests and quality gates rather than assumed to be correct.
+
+\subsection{User Feedback}
+To collect early feedback, the team distributed a Google Form after demonstrating the system to three users. The goal of this activity was not to claim a large usability study, but to gather initial reactions from likely target users and identify practical improvement points.
+
+\begin{table}[htbp]
+    \centering
+    \renewcommand{\arraystretch}{1.25}
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.12\textwidth}>{\raggedright\arraybackslash}p{0.24\textwidth}>{\raggedright\arraybackslash}X}
+        \toprule
+        \rowcolor[gray]{0.9} \textbf{User} & \textbf{Profile} & \textbf{Feedback Summary} \\
+        \midrule
+        User 1 & First-time homebuyer & Found the map and valuation summary easy to understand. Requested clearer labels for some indicators before making a final decision. \\
+        User 2 & First-time homebuyer & Considered the location intelligence panel helpful when comparing neighborhoods. Wanted a clearer explanation of confidence and risk colors. \\
+        User 3 & Real estate investor & Valued the district comparison and localized risk information. Wanted stronger confidence guidance when comparing several properties. \\
+        \bottomrule
+    \end{tabularx}
+    \caption{Preliminary Google Form Feedback from Three Users}
+    \label{tab:chapter8-user-feedback}
+\end{table}
+
+Overall, the feedback was positive toward the system concept and the integration of multiple forms of analysis in one interface. The responses also confirmed that trust, explanation clarity, and chatbot accuracy should remain high-priority improvement areas.
+
+%----------------------------------------------------------------------
+\section{Discussion}
+%----------------------------------------------------------------------
+
+\subsection{Key Areas for Future Focus}
+The next phase of the project should focus on a few areas that have the highest impact on user trust and system usefulness.
+
+\begin{itemize}
+    \item \textbf{Source completeness and traceability:} Every indicator should have a complete source reference so that users can verify where the information comes from.
+    \item \textbf{Chatbot retrieval quality:} Location-specific questions should continue to be improved through stronger retrieval, better benchmark coverage, and tighter grounding rules.
+    \item \textbf{Performance for heavy geospatial workflows:} The platform should continue reducing latency for location intelligence and dense map interactions.
+    \item \textbf{Model and data refresh cycle:} New transaction data, listing updates, and periodic retraining are needed to keep the valuation result current.
+    \item \textbf{Broader user evaluation:} A larger user study would provide stronger evidence on usability, trust, and feature usefulness across different user groups.
+\end{itemize}
+
+\subsection{Challenges Encountered}
+During development, the team faced several challenges that influenced both implementation effort and system quality.
+
+\begin{itemize}
+    \item \textbf{Data fragmentation:} Real estate, transit, POI, and risk data come from different sources with different formats and update cycles.
+    \item \textbf{Model selection trade-offs:} More advanced model variants did not automatically provide better real-world performance, so benchmark discipline was necessary.
+    \item \textbf{Explainability requirements:} It was not enough to show factors visually; the project also needed methods to verify that those factors truly affected the prediction.
+    \item \textbf{Grounded AI responses:} The chatbot needed stronger retrieval and tool-use controls to avoid vague or mismatched answers for specific neighborhoods.
+    \item \textbf{System performance:} Combining geospatial analytics, AI inference, and interactive visualization created non-trivial latency and operational complexity.
+\end{itemize}
+
+In summary, the project achieved its main objective of building a practical and explainable real estate information platform for Bangkok. At the same time, the discussion points show that the most important future work is not only adding new features, but also strengthening trust, precision, and operational readiness.

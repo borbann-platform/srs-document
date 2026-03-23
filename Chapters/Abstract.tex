@@ -1,10 +1,13 @@
 % A B S T R A C T
 % ---------------
 
-\section*{Abstract} 
-The abstract should not exceed 500 words or 2 pages. The abstract should explain the domain of the thesis, identify topic area, include the hypothesis or problem statement, provide a general overview of the methodology, and identify research benefits and key findings and/or contributions.
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
 
+BorBann is a real estate information platform developed to support homebuyers, investors, and business users in Bangkok. The project addresses a common problem in the Thai real estate market: important information is spread across many sources and is difficult to compare in one place. To solve this, the platform combines property data, public records, points of interest, transit information, and environmental risk indicators in a single web-based system.
 
+The delivered system includes an interactive map, a location intelligence dashboard, an explainable property valuation module, and an AI chat assistant that can answer location-specific questions through retrieval and tool-based reasoning. The frontend is implemented with React, while the backend uses FastAPI, PostgreSQL, and PostGIS for geospatial processing. For valuation, the current production path uses a LightGBM model with spatial features, while graph-based models are retained as an experimental direction.
+
+The project also places emphasis on trust and verification. The platform provides confidence signals, feature-based explanations, score legends, and source tooltips so that users can understand both the result and its origin. Evaluation covers functional testing, model benchmarking, explainability checks, chatbot quality checks, and load testing. Initial feedback from a small Google Form study with five users shows that users value the map-based workflow, readable summaries, and localized insights, while also requesting stronger chatbot accuracy and clearer visual cues in some views. Overall, BorBann demonstrates that a locally adapted, data-driven platform can improve the accessibility and usefulness of real estate information in Thailand.
 
 \cleardoublepage
-%\newpage
